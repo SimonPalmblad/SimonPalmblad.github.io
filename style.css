@@ -1,34 +1,81 @@
+/* reference starting color: #00cca3
+* https://www.color-hex.com/color/00cca3#shades-tints
+*/
+
 :root{
+    font-family: sans-serif;
     --icon-size: 120px;
     --container-max-width: 800px;
     --container-min-width: 300px;
+    --background-color: #121212;
+    --surface-color: #121212;
+    --primary-color: #00a382;
+    --primary-variant-color: #006651;
+    --secondary-color: #a38200;
+    --text-color-on-background: #FFFFFF;
+    --text-color-on-surface: #FFFFFF;
+    --text-color-on-primary: #000000;
+    --text-color-on-secondary: #000000;
+
+    --border-radius-element: 12px;
+    --elevation-overlay: #FFFFFF;
+
 }
 
-.title
+body{
+    background-color: var(--background-color);
+}
+
+body, header
 {
-    font-size: 16px;
-    font-family: sans-serif;
-    color: aquamarine;
+    margin: 0;
 }
 
-.main-container {
+.header
+{
+    position:relative;
+    text-align: center;
+    font-size: 50px;
+    font-family: sans-serif;
+    color: var(--primary-color);
+    padding-bottom: 25px;
+    padding-top: 25px;
+    margin-bottom: 25px;
+
+    background-color: var(--surface-color);
+}
+
+.header::before{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 5%);
+    pointer-events: none;
+}
+
+
+.main-container
+{
     margin: 0 auto;
     padding: 0 25px;
     border-radius: 25px;
     min-width: var(--container-min-width);
     max-width: var(--container-max-width);
-    color: white;
-    background-color: black;
+    /*color: var(--light-color);*/
+    background-color: var(--surface-color);
     align-content: center;
 }
 
+
+
 .element
 {
+    position: relative;
     display: flex;
     color: white;
     justify-content: space-between;
     align-items: stretch;
-    background-color: white;
+    background-color: var(--surface-color);
     padding: 25px;
     border-radius: 25px;
     border-width: medium;
@@ -37,23 +84,84 @@
     margin-bottom: 10px;
 }
 
-.button
+.description-container
 {
+    position: relative;
     flex-grow: 1;
-    margin-left: 25px;
-    margin-right: 25px;
-    background-color: black;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: flex-start;*/
+    margin: 0 25px;
+    padding: 12px 25px;
+    min-width: 0;
 }
 
-.button:hover {
-    background-color: white;
+.description-container::before{
+    content: "";
+    position: absolute;
+    border-radius: var(--border-radius-element);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 7%);
+    pointer-events: none;
 }
 
-.button-text {
+.description
+{
+    min-height: 38px;
+    flex-grow: 1;
+}
+
+.read-more::before{
+    content: "";
+    position: absolute;
+    border-radius: var(--border-radius-element);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 10%);
+    pointer-events: none;
+}
+.read-more{
+    position: relative;
+    padding: 1px 16px; /* <p> element has top/bot margin of 16px*/
+    margin: 12px 0;
+}
+
+.button-container
+{
+    display: flex;
+
+
+    gap: 12px;
+}
+
+.button {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 0;
+    position: relative;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius-element);
+    border-color: var(--primary-color);
+    font-size: 16px;
     color: white;
-    font-size: 12px;
-    font-family: sans-serif;
+}
+
+.button::before{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: var(--border-radius-element);
+    background-color: rgba(255, 255, 255, 8%);
+    pointer-events: none;
+}
+
+.button:hover
+{
+    background-color: var(--primary-color);
+}
+
+.is-active
+{
+    background-color: var(--primary-variant-color);
 }
 
 .icon {
@@ -61,7 +169,9 @@
     flex-shrink: 0;
     width: var(--icon-size);
     height: var(--icon-size);
-    background-color: green;
+    object-fit: cover;
+    display: block;
+    background-color: grey;
 }
 
 
