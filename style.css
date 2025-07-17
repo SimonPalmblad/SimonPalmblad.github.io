@@ -138,11 +138,16 @@ body, header
     flex-basis: 0;
     min-width: 0;
     position: relative;
-    background-color: var(--surface-color);
+    background: linear-gradient(-45deg, var(--surface-color) 50%, var(--primary-color) 50%);
+    background-size: 300%;
+    background-position: 100%;
     border-radius: var(--border-radius-element);
     border-color: var(--primary-color);
     font-size: 16px;
     color: white;
+    transition: 0.5s;
+    transition-timing-function: ease-in-out;
+
 }
 
 .button::before{
@@ -156,12 +161,14 @@ body, header
 
 .button:hover
 {
-    background-color: var(--primary-color);
+    background-position: 0;
+    transition: 0.3s;
+    transition-timing-function: ease-in-out;
 }
 
 .is-active
 {
-    background-color: var(--primary-variant-color);
+    background-position: 65%;
 }
 
 .icon {
