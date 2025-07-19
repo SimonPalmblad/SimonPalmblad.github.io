@@ -2,8 +2,14 @@
 * https://www.color-hex.com/color/00cca3#shades-tints
 */
 
+@import url('https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;600&display=swap');
+
 :root{
-    font-family: sans-serif;
+    --font-family: Mona Sans, sans-serif;
+    --font-weight-bold: 600;
+    --font-weight-normal: 400;
+    font-family: var(--font-family), sans-serif;
+    font-weight: var(--font-weight-normal);
     --icon-size: 120px;
     --container-max-width: 800px;
     --container-min-width: 300px;
@@ -33,10 +39,10 @@ body, header
 
 .header
 {
+    font-weight: var(--font-weight-bold);
     position:relative;
     text-align: center;
     font-size: 50px;
-    font-family: sans-serif;
     color: var(--primary-color);
     padding-bottom: 25px;
     padding-top: 25px;
@@ -128,12 +134,11 @@ body, header
 .button-container
 {
     display: flex;
-
-
     gap: 12px;
 }
 
 .button {
+    font-family: var(--font-family), sans-serif;
     flex-grow: 1;
     flex-basis: 0;
     min-width: 0;
@@ -166,9 +171,19 @@ body, header
     transition-timing-function: ease-in-out;
 }
 
-.is-active
+.is-active-button
 {
     background-position: 65%;
+}
+
+.hidden-element{
+    height: 0;
+    overflow: hidden;
+    transition: height 0.4s ease-in-out;
+}
+
+.hidden-element.visible{
+
 }
 
 .icon {
@@ -180,6 +195,12 @@ body, header
     display: block;
     background-color: grey;
 }
+
+/*.icon:hover{*/
+/*    transform: rotate(360deg);*/
+/*    transition: 0.5s ease-in-out;*/
+
+/*}*/
 
 
 
