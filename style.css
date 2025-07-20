@@ -16,8 +16,8 @@
     --background-color: #121212;
     --surface-color: #121212;
     --primary-color: #00a382;
-    --primary-variant-color: #006651;
-    --secondary-color: #a38200;
+    --primary-variant-color: #264741;
+    --secondary-color: #C09A3F;
     --text-color-on-background: #FFFFFF;
     --text-color-on-surface: #FFFFFF;
     --text-color-on-primary: #000000;
@@ -43,12 +43,14 @@ body, header
     position:relative;
     text-align: center;
     font-size: 50px;
-    color: var(--primary-color);
     padding-bottom: 25px;
     padding-top: 25px;
-    margin-bottom: 25px;
+    /*margin-bottom: 25px;*/
+    background-color: var(--primary-variant-color);
 
-    background-color: var(--surface-color);
+
+    /*background: linear-gradient(to right,  var(--background-color) 27%, var(--primary-variant-color), 73%);*/
+    /*background: linear-gradient(to right, var(--primary-variant-color) 27%, var(--background-color), 73%);*/
 }
 
 .header::before{
@@ -63,16 +65,18 @@ body, header
 .main-container
 {
     margin: 0 auto;
-    padding: 0 25px;
-    border-radius: 25px;
+    padding-top: 25px;
+    padding-left: 85px;
+    padding-right: 85px;
+    /*border-radius: 25px;*/
     min-width: var(--container-min-width);
     max-width: var(--container-max-width);
-    /*color: var(--light-color);*/
     background-color: var(--surface-color);
+    border: 2px dashed #FFFFFF12;
+    border-top: transparent;
+    border-bottom: transparent;
     align-content: center;
 }
-
-
 
 .element
 {
@@ -83,33 +87,51 @@ body, header
     align-items: stretch;
     background-color: var(--surface-color);
     padding: 25px;
-    border-radius: 25px;
+    /*border-radius: 25px;*/
     border-width: medium;
 
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
+.box-container{
+    display: flex;
+    /*flex-direction: column;*/
+}
+
 .description-container
-{
+ {
     position: relative;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     /*justify-content: flex-start;*/
-    margin: 0 25px;
-    padding: 12px 25px;
+    /*margin: 0 25px;*/
     min-width: 0;
+    padding: 12px 25px;
 }
 
 .description-container::before{
     content: "";
     position: absolute;
-    border-radius: var(--border-radius-element);
+    /*border-radius: var(--border-radius-element);*/
     top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(255, 255, 255, 7%);
     pointer-events: none;
 }
+
+.striped-element{
+    min-width: 10px;
+    background-image: repeating-linear-gradient(45deg,
+    var(--text-color-on-surface) 0,
+    var(--text-color-on-surface) 3px,
+    var(--background-color) 3px,
+    var(--background-color) 6px);
+    opacity: 7%;
+}
+
+
+
 
 .description
 {
@@ -120,7 +142,7 @@ body, header
 .read-more::before{
     content: "";
     position: absolute;
-    border-radius: var(--border-radius-element);
+    /*border-radius: var(--border-radius-element);*/
     top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(255, 255, 255, 10%);
     pointer-events: none;
@@ -144,8 +166,8 @@ body, header
     min-width: 0;
     position: relative;
     background: linear-gradient(-45deg, var(--surface-color) 50%, var(--primary-color) 50%);
-    background-size: 300%;
     background-position: 100%;
+    background-size: 300%;
     border-radius: var(--border-radius-element);
     border-color: var(--primary-color);
     font-size: 16px;

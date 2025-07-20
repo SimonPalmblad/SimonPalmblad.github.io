@@ -29,9 +29,8 @@ class ProjectPreviewTemplate extends HTMLElement
         const container = document.createElement('div');
         container.className = 'element';
 
-        const icon = document.createElement('img');
-        icon.className = 'icon';
-        icon.src = this.getAttribute('icon');
+        const boxContainer = document.createElement('div');
+        boxContainer.className = 'box-container';
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
@@ -73,6 +72,8 @@ class ProjectPreviewTemplate extends HTMLElement
         const readMoreText = document.createElement('p');
         readMoreText.textContent = this.getAttribute('read-more-text') || loremIpsum;
 
+        const stripedElement = document.createElement('div')
+        stripedElement.classList.add('striped-element');
 
         /// -------- APPEND HTML ELEMENTS -------- ///
         readMoreContainer.appendChild(readMoreText);
@@ -84,8 +85,10 @@ class ProjectPreviewTemplate extends HTMLElement
         descriptionContainer.appendChild(buttonContainer);
         descriptionContainer.appendChild(readMoreContainer);
 
-        container.appendChild(icon);
-        container.appendChild(descriptionContainer);
+        boxContainer.appendChild(descriptionContainer);
+        boxContainer.appendChild(stripedElement);
+        // container.appendChild(icon);
+        container.appendChild(boxContainer);
 
         this.shadowRoot.appendChild(container);
     }
