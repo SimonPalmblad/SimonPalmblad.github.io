@@ -24,8 +24,6 @@ class ProjectPreviewTemplate extends HTMLElement
 
         this.shadowRoot.appendChild(style);
 
-        const url = this.getAttribute('target-url') || 'no_URL';
-
         // -------- MAIN ELEMENT ---------- //
         const mainElement = document.createElement('div');
         mainElement.className = 'element';
@@ -61,7 +59,7 @@ class ProjectPreviewTemplate extends HTMLElement
 
         const readMoreResult = CreateReadMoreElement(
             loremIpsum,
-            " https://bing.com",
+            this.getAttribute('target-url') || 'no_URL',
             [leftBar],
             [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine]);
 
