@@ -10,7 +10,7 @@
     --font-weight-normal: 400;
     font-family: var(--font-family), sans-serif;
     font-weight: var(--font-weight-normal);
-    --icon-size: 120px;
+    --icon-size: 60px;
     --container-max-width: 800px;
     --container-min-width: 300px;
     --background-color: #121212;
@@ -25,6 +25,8 @@
 
     --border-radius-element: 12px;
     --elevation-overlay: #FFFFFF;
+
+    --main-container-horizontal-padding: 85px;
 
 }
 
@@ -66,8 +68,8 @@ body, header
 {
     margin: 0 auto;
     padding-top: 25px;
-    padding-left: 85px;
-    padding-right: 85px;
+    padding-left: var(--main-container-horizontal-padding);
+    padding-right: var(--main-container-horizontal-padding);
     /*border-radius: 25px;*/
     min-width: var(--container-min-width);
     max-width: var(--container-max-width);
@@ -86,7 +88,7 @@ body, header
     justify-content: space-between;
     align-items: stretch;
     background-color: var(--surface-color);
-    padding: 25px;
+    /*padding: 25px;*/
     /*border-radius: 25px;*/
     border-width: medium;
 
@@ -99,8 +101,27 @@ body, header
     /*flex-direction: column;*/
 }
 
+.description-element::before{
+    content: "";
+    position: absolute;
+    /*border-radius: var(--border-radius-element);*/
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 7%);
+    pointer-events: none;
+}
+
+.description-element {
+    display: flex;
+}
+
+.description-element-sidebar{
+    min-width: 12px;
+    /*border: 1px solid var(--text-color-on-surface);*/
+    /*opacity: 7%;*/
+}
+
 .description-container
- {
+{
     position: relative;
     flex-grow: 1;
     display: flex;
@@ -111,32 +132,24 @@ body, header
     padding: 12px 25px;
 }
 
-.description-container::before{
-    content: "";
-    position: absolute;
-    /*border-radius: var(--border-radius-element);*/
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(255, 255, 255, 7%);
-    pointer-events: none;
-}
-
-.striped-element{
-    min-width: 10px;
-    background-image: repeating-linear-gradient(45deg,
-    var(--text-color-on-surface) 0,
-    var(--text-color-on-surface) 3px,
-    var(--background-color) 3px,
-    var(--background-color) 6px);
-    opacity: 7%;
-}
-
-
-
-
 .description
 {
     min-height: 38px;
     flex-grow: 1;
+}
+
+.striped-background{
+    background-image: repeating-linear-gradient(45deg,
+    var(--text-color-on-surface) 0,
+    var(--text-color-on-surface) 1px,
+    var(--background-color) 1px,
+    var(--background-color) 5px);
+    opacity: 12%;
+}
+
+.description-element-sidebar.highlighted{
+    background-color: var(--secondary-color);
+    transition: background-color 0.5s ease-in-out;
 }
 
 .read-more::before{
@@ -209,13 +222,22 @@ body, header
 }
 
 .icon {
-    border-radius: 50%;
+    position:absolute;
+
+    left: calc(-1 *
+    (
+    var(--main-container-horizontal-padding)
+    + var(--icon-size)/2
+    + 2px
+    )); /*2xp for border width offset*/
+
     flex-shrink: 0;
     width: var(--icon-size);
     height: var(--icon-size);
-    object-fit: cover;
-    display: block;
-    background-color: grey;
+    border: 2px solid var(--text-color-on-surface);
+    opacity: 7%;
+    transform: translateY(-50%) rotate(45deg);
+    /*rotate: 45deg;*/
 }
 
 /*.icon:hover{*/

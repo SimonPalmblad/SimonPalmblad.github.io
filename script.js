@@ -7,6 +7,7 @@ let cachedCSS = null;
  * */
 class ProjectPreviewTemplate extends HTMLElement
 {
+
     constructor(){
         super();
         this.attachShadow({mode: 'open'});
@@ -26,11 +27,24 @@ class ProjectPreviewTemplate extends HTMLElement
 
         const url = this.getAttribute('target-url') || 'no_URL';
 
-        const container = document.createElement('div');
-        container.className = 'element';
+        // -------- MAIN ELEMENT ---------- //
+        const mainElement = document.createElement('div');
+        mainElement.className = 'element';
 
-        const boxContainer = document.createElement('div');
-        boxContainer.className = 'box-container';
+        const icon = document.createElement('div');
+        icon.className = 'icon';
+
+        // ------- ELEMENT HOLDING DESC & LINK BUTTONS -------- //
+        const descriptionElement = document.createElement('div');
+        descriptionElement.className = 'description-element';
+
+        const rightBar = document.createElement('div')
+        rightBar.classList.add('description-element-sidebar');
+        rightBar.classList.add('striped-background');
+
+        const leftBar = document.createElement('div');
+        leftBar.classList.add('description-element-sidebar');
+        // leftBar.classList.add('hidden-element');
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
@@ -39,6 +53,7 @@ class ProjectPreviewTemplate extends HTMLElement
         description.className = 'description';
         description.textContent = this.getAttribute('description');
 
+        // ----- READ MORE BUTTON & CONTAINER ------ //
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
 
@@ -48,7 +63,7 @@ class ProjectPreviewTemplate extends HTMLElement
 
         buttonReadMore.addEventListener('click', () => {
             const isActive = buttonReadMore.classList.toggle('is-active-button');
-            // buttonReadMore.setAttribute('aria-pressed', isActive);
+            leftBar.classList.toggle('highlighted')
             AnimateContainerExpansion(readMoreContainer);
 
             if(isActive){
@@ -72,8 +87,13 @@ class ProjectPreviewTemplate extends HTMLElement
         const readMoreText = document.createElement('p');
         readMoreText.textContent = this.getAttribute('read-more-text') || loremIpsum;
 
-        const stripedElement = document.createElement('div')
-        stripedElement.classList.add('striped-element');
+        /// ----
+
+        //RESTYLE SO IT'S ATTACHED TO THE DESC ELEMENT BUT OFFSET HORIZONTALLY
+        requestAnimationFrame(() => {
+            const descriptionRect = descriptionElement.getBoundingClientRect();
+            icon.style.top = descriptionRect.height/2+'px';
+        });
 
         /// -------- APPEND HTML ELEMENTS -------- ///
         readMoreContainer.appendChild(readMoreText);
@@ -85,12 +105,13 @@ class ProjectPreviewTemplate extends HTMLElement
         descriptionContainer.appendChild(buttonContainer);
         descriptionContainer.appendChild(readMoreContainer);
 
-        boxContainer.appendChild(descriptionContainer);
-        boxContainer.appendChild(stripedElement);
-        // container.appendChild(icon);
-        container.appendChild(boxContainer);
+        descriptionElement.appendChild(icon);
+        descriptionElement.appendChild(leftBar);
+        descriptionElement.appendChild(descriptionContainer);
+        descriptionElement.appendChild(rightBar);
 
-        this.shadowRoot.appendChild(container);
+        mainElement.appendChild(descriptionElement);
+        this.shadowRoot.appendChild(mainElement);
     }
 
     GoToURL(url)
