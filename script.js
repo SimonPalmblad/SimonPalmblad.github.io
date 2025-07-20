@@ -7,7 +7,6 @@ let cachedCSS = null;
  * */
 class ProjectPreviewTemplate extends HTMLElement
 {
-
     constructor(){
         super();
         this.attachShadow({mode: 'open'});
@@ -31,9 +30,6 @@ class ProjectPreviewTemplate extends HTMLElement
         const mainElement = document.createElement('div');
         mainElement.className = 'element';
 
-        const icon = document.createElement('div');
-        icon.className = 'icon';
-
         // ------- ELEMENT HOLDING DESC & LINK BUTTONS -------- //
         const descriptionElement = document.createElement('div');
         descriptionElement.className = 'description-element';
@@ -44,6 +40,8 @@ class ProjectPreviewTemplate extends HTMLElement
 
         const leftBar = document.createElement('div');
         leftBar.classList.add('description-element-sidebar');
+        leftBar.classList.add('selection-sidebar');
+        leftBar.classList.add('selection-animation');
         // leftBar.classList.add('hidden-element');
 
         const descriptionContainer = document.createElement('div');
@@ -53,74 +51,39 @@ class ProjectPreviewTemplate extends HTMLElement
         description.className = 'description';
         description.textContent = this.getAttribute('description');
 
-        // ----- READ MORE BUTTON & CONTAINER ------ //
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'button-container';
 
-        const buttonReadMore = document.createElement('button');
-        buttonReadMore.className = 'button';
-        buttonReadMore.textContent = 'Read more';
+        const selectionDiamond = document.createElement('div');
+        selectionDiamond.className = 'selection-diamond';
 
-        buttonReadMore.addEventListener('click', () => {
-            const isActive = buttonReadMore.classList.toggle('is-active-button');
-            leftBar.classList.toggle('highlighted')
-            AnimateContainerExpansion(readMoreContainer);
+        // ------- SELECTION INDICATORS -------- //
 
-            if(isActive){
-                buttonReadMore.textContent = 'Close';
-            }
+        const selectionIndicatorInner = CreateSelectionIndicatorInner(descriptionElement);
 
-            else{
-                buttonReadMore.textContent = 'Read more';
-            }
-        });
+        const readMoreResult = CreateReadMoreElement(
+            loremIpsum,
+            " https://bing.com",
+            [leftBar],
+            [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine]);
 
-        const buttonURL = document.createElement('button');
-        buttonURL.className = 'button';
-        buttonURL.textContent = 'Go to project ➡';
-        buttonURL.addEventListener('click', () => this.GoToURL(url))
-
-        const readMoreContainer = document.createElement('div');
-        readMoreContainer.className = 'read-more';
-        readMoreContainer.classList.add('hidden-element');
-
-        const readMoreText = document.createElement('p');
-        readMoreText.textContent = this.getAttribute('read-more-text') || loremIpsum;
-
-        /// ----
-
-        //RESTYLE SO IT'S ATTACHED TO THE DESC ELEMENT BUT OFFSET HORIZONTALLY
+        // Center SelectionDiamond vertically in relation to DescriptionElement
         requestAnimationFrame(() => {
             const descriptionRect = descriptionElement.getBoundingClientRect();
-            icon.style.top = descriptionRect.height/2+'px';
+            selectionDiamond.style.top = descriptionRect.height/2+'px';
         });
 
-        /// -------- APPEND HTML ELEMENTS -------- ///
-        readMoreContainer.appendChild(readMoreText);
-
-        buttonContainer.appendChild(buttonReadMore);
-        buttonContainer.appendChild(buttonURL);
-
+        /// -------- CREATE HTML TREE -------- ///
         descriptionContainer.appendChild(description);
-        descriptionContainer.appendChild(buttonContainer);
-        descriptionContainer.appendChild(readMoreContainer);
-
-        descriptionElement.appendChild(icon);
+        descriptionContainer.appendChild(readMoreResult.buttonContainer);
+        descriptionContainer.appendChild(readMoreResult.readMoreContainer);
+        
+        descriptionElement.appendChild(selectionIndicatorInner.selectionCircle);
+        descriptionElement.appendChild(selectionDiamond);
         descriptionElement.appendChild(leftBar);
         descriptionElement.appendChild(descriptionContainer);
         descriptionElement.appendChild(rightBar);
 
         mainElement.appendChild(descriptionElement);
         this.shadowRoot.appendChild(mainElement);
-    }
-
-    GoToURL(url)
-    {
-        if(url === 'no_URL')
-        {
-            return;
-        }
-        window.open(url, '_blank');
     }
 }
 
@@ -153,8 +116,95 @@ function AnimateContainerExpansion(resizedContainer){
     });
 }
 
+/**
+ * Summary: Creates an HTML element with a Read More button and a To Project button.
+ * Read More expands/collapses a paragraph of text.
+ * @param {string} textContent - string text to show when Read More is clicked.
+ * @param {string} targetURL - the URL to open.
+ * @param {*[]} highlights - the HTML elements to highlight when Read More is active.
+ * @param {*[]} highlightBorders - the HTML elements to add highlighted borders to when Read More is active.
+ * */
+function CreateReadMoreElement(textContent, targetURL, highlights = [], highlightBorders = [] )
+{
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'button-container';
 
+    const buttonReadMore = document.createElement('button');
+    buttonReadMore.className = 'button';
+    buttonReadMore.textContent = 'Read more';
 
+    const readMoreContainer = document.createElement('div');
+    readMoreContainer.className = 'read-more';
+    readMoreContainer.classList.add('hidden-element');
+
+    const buttonURL = document.createElement('button');
+    buttonURL.className = 'button';
+    buttonURL.textContent = 'Go to project ➡';
+    buttonURL.addEventListener('click', () => GoToURL(targetURL))
+
+    const readMoreText = document.createElement('p');
+    readMoreText.textContent = textContent;
+
+    /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
+
+    buttonReadMore.addEventListener('click', () => {
+        console.log('clicked');
+        const isActive = buttonReadMore.classList.toggle('is-active-button');
+
+        for (let highlight of highlights) {
+            highlight.classList.toggle('selection-highlight');
+            highlight.classList.toggle(isActive ? 'selection-animation-active' : 'selection-animation-inactive');
+        }
+
+        for (let border of highlightBorders) {
+            border.classList.toggle('selection-highlight-border');
+            border.classList.toggle(isActive ? 'selection-animation-active' : 'selection-animation-inactive');
+        }
+
+        AnimateContainerExpansion(readMoreContainer);
+
+        if(isActive){
+            buttonReadMore.textContent = 'Close';
+        }
+
+        else{
+            buttonReadMore.textContent = 'Read more';
+        }
+    });
+
+    buttonContainer.appendChild(buttonReadMore);
+    buttonContainer.appendChild(buttonURL);
+    readMoreContainer.appendChild(readMoreText);
+
+    return {readMoreContainer, buttonContainer};
+}
+
+function CreateSelectionIndicatorInner(parent)
+{
+    const selectionCircle = document.createElement('div');
+    const selectionLine = document.createElement('div');
+    selectionLine.className = 'selection-line';
+    selectionLine.classList.add('selection-animation');
+    selectionCircle.className = 'selection-circle';
+    selectionCircle.classList.add('selection-animation');
+
+    requestAnimationFrame(() => {
+        const descriptionRect = parent.getBoundingClientRect();
+        selectionCircle.style.top = descriptionRect.height/2+'px';
+    });
+
+    selectionCircle.appendChild(selectionLine);
+    return {selectionCircle, selectionLine};
+}
+
+function GoToURL(url)
+{
+    if(url === 'no_URL')
+    {
+        return;
+    }
+    window.open(url, '_blank');
+}
 
 let loremIpsum = 'There are many variations of passages of Lorem Ipsum available, ' +
     'but the majority have suffered alteration in some form, by injected humour, ' +
