@@ -39,11 +39,16 @@ class ProjectPreviewTemplate extends HTMLElement
         const leftBar = document.createElement('div');
         leftBar.classList.add('description-element-sidebar');
         leftBar.classList.add('selection-sidebar');
-        leftBar.classList.add('selection-animation');
+        leftBar.classList.add('selection-animation-inactive');
         // leftBar.classList.add('hidden-element');
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
+
+        const descriptionTitle = document.createElement('p');
+        descriptionTitle.className = 'description-title';
+        descriptionTitle.textContent = this.getAttribute('title');
+
 
         const description = document.createElement('p');
         description.className = 'description';
@@ -52,6 +57,7 @@ class ProjectPreviewTemplate extends HTMLElement
 
         const selectionDiamond = document.createElement('div');
         selectionDiamond.className = 'selection-diamond';
+        selectionDiamond.classList.add('selection-animation-inactive');
 
         // ------- SELECTION INDICATORS -------- //
 
@@ -70,6 +76,7 @@ class ProjectPreviewTemplate extends HTMLElement
         });
 
         /// -------- CREATE HTML TREE -------- ///
+        descriptionContainer.appendChild(descriptionTitle);
         descriptionContainer.appendChild(description);
         descriptionContainer.appendChild(readMoreResult.buttonContainer);
         descriptionContainer.appendChild(readMoreResult.readMoreContainer);
@@ -124,12 +131,15 @@ function AnimateContainerExpansion(resizedContainer){
  * */
 function CreateReadMoreElement(textContent, targetURL, highlights = [], highlightBorders = [] )
 {
+    const showMoreText = "Show more";
+    const showLessText = "Show less";
+
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'button-container';
 
     const buttonReadMore = document.createElement('button');
     buttonReadMore.className = 'button';
-    buttonReadMore.textContent = 'Read more';
+    buttonReadMore.textContent = showMoreText;
 
     const readMoreContainer = document.createElement('div');
     readMoreContainer.className = 'read-more';
@@ -137,8 +147,16 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
 
     const buttonURL = document.createElement('button');
     buttonURL.className = 'button';
-    buttonURL.textContent = 'Go to project ➡';
+    buttonURL.classList.add('github');
     buttonURL.addEventListener('click', () => GoToURL(targetURL))
+
+    const buttonURLText = document.createElement('span');
+    buttonURLText.textContent = 'Project repository';
+
+
+    const buttonURLIcon = document.createElement('img');
+    buttonURLIcon.className = 'github-icon';
+    buttonURLIcon.src = 'images/SVGs/repository_icon.svg';
 
     const readMoreText = document.createElement('p');
     readMoreText.textContent = textContent;
@@ -151,24 +169,29 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
 
         for (let highlight of highlights) {
             highlight.classList.toggle('selection-highlight');
-            highlight.classList.toggle(isActive ? 'selection-animation-active' : 'selection-animation-inactive');
+            highlight.classList.toggle('selection-animation-active');
+            highlight.classList.toggle('selection-animation-inactive');
         }
 
         for (let border of highlightBorders) {
             border.classList.toggle('selection-highlight-border');
-            border.classList.toggle(isActive ? 'selection-animation-active' : 'selection-animation-inactive');
+            border.classList.toggle('selection-animation-active');
+            border.classList.toggle('selection-animation-inactive');
         }
 
         AnimateContainerExpansion(readMoreContainer);
 
         if(isActive){
-            buttonReadMore.textContent = 'Close';
+            buttonReadMore.textContent = showLessText;
         }
 
         else{
-            buttonReadMore.textContent = 'Read more';
+            buttonReadMore.textContent = showMoreText;
         }
     });
+
+    buttonURL.appendChild(buttonURLIcon);
+    buttonURL.appendChild(buttonURLText);
 
     buttonContainer.appendChild(buttonReadMore);
     buttonContainer.appendChild(buttonURL);
@@ -182,9 +205,9 @@ function CreateSelectionIndicatorInner(parent)
     const selectionCircle = document.createElement('div');
     const selectionLine = document.createElement('div');
     selectionLine.className = 'selection-line';
-    selectionLine.classList.add('selection-animation');
+    selectionLine.classList.add('selection-animation-inactive');
     selectionCircle.className = 'selection-circle';
-    selectionCircle.classList.add('selection-animation');
+    selectionCircle.classList.add('selection-animation-inactive');
 
     requestAnimationFrame(() => {
         const descriptionRect = parent.getBoundingClientRect();
