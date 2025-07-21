@@ -33,6 +33,7 @@
 
     --box-shadow-default: 0 2px 6px rgba(0, 0, 0, 0.25);
     --box-glow-highlight: 0  0 3px 2px rgba(255,255, 225, 7%);
+
     font-family: var(--font-family), sans-serif;
     font-weight: var(--font-weight-normal);
     color: var(--text-color-on-background);
@@ -121,19 +122,48 @@ body, header
 }
 
 .section-icon{
+    position: relative;
     /*padding-right: 12px;*/
     padding: var(--section-icon-padding);
     margin-right:var(--section-icon-margin);
     width: var(--section-icon-size);
     height: var(--section-icon-size);
+
     background-color: var(--primary-color);
     border-radius: var(--border-radius-element);
     border: 2px solid #FFFFFF50;
+    box-shadow: var(--box-shadow-default);
 
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+}
+
+@property --deg {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.section-icon::before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(4px);
+    background-image: conic-gradient(from var(--deg), #FFFFFF, #000000);
+    opacity: 15%;
+    animation: rotating-border 4s ease-in-out infinite;
+}
+
+@keyframes rotating-border {
+    to{
+        --deg: 1turn;
+    }
 }
 
 .section-icon img{
@@ -256,9 +286,11 @@ body, header
     pointer-events: none;
 }
 .read-more{
+    border-radius: var(--border-radius-element);
     position: relative;
     padding: 1px 16px; /* <p> element has top/bot margin of 16px*/
     margin: 12px 0;
+    box-shadow: var(--box-shadow-default);
 }
 
 /* BUTTON ELEMENTS */
@@ -320,8 +352,19 @@ body, header
 
 .is-active-button
 {
-    background-color: var(--secondary-color);
+    background: var(--secondary-color);
     color: var(--surface-color);
+}
+
+.is-active-button::before{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: conic-gradient(from var(--deg), #FFFFFF, #000000);
+    opacity: 15%;
+    filter: blur(25px);
+    animation: rotating-border 4s linear infinite;
+    pointer-events: none;
 }
 
 .is-active-button:hover
