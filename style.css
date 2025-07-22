@@ -17,13 +17,17 @@
     --primary-color: #00a382;
     --primary-variant-color: #264741;
     --secondary-color: #C09A3F;
+    --secondary-variant-color: #a35929;
     --text-color-on-background: #EBEBEB;
     --text-color-on-surface: #EBEBEB;
     --text-color-on-primary: #000000;
     --text-color-on-secondary: #000000;
 
     --border-radius-element: 8px;
-    --surface-border-color: #FFFFFF12;
+    --surface-border-color: #333333;
+    --tag-color: #676767;
+    --primary-middle-color: #285c51;
+
 
     --main-container-horizontal-padding: 85px;
     --selection-circle-size: 22px;
@@ -32,7 +36,13 @@
     --section-icon-margin: 12px;
 
     --box-shadow-default: 0 2px 6px rgba(0, 0, 0, 0.25);
-    --box-glow-highlight: 0  0 3px 2px rgba(255,255, 225, 7%);
+    --box-glow-highlight-blur: 5px;
+    --box-glow-opacity: 0.07;
+    --box-glow-highlight:
+            0  0 var(--box-glow-highlight-blur) 2px rgba(255, 179, 115, var(--box-glow-opacity)),
+            0  0 var(--box-glow-highlight-blur) 2px rgba(255, 179, 115, var(--box-glow-opacity)) inset,
+            0  0 var(--box-glow-highlight-blur) 1px rgba(241, 74, 0, var(--box-glow-opacity)),
+            0  0 var(--box-glow-highlight-blur) 1px rgba(241, 74, 0, var(--box-glow-opacity)) inset;
 
     font-family: var(--font-family), sans-serif;
     font-weight: var(--font-weight-normal);
@@ -77,6 +87,10 @@ body, header
     background-color: #000000;
     opacity: 25%;
     pointer-events: none;
+}
+
+p{
+    white-space: pre-wrap;
 }
 
 .header-pattern{
@@ -138,13 +152,16 @@ body, header
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    clip-path: polygon(
+            0 0, 15% 0, 50% 0, 85% 0,
+            100% 0, 100% 15%, 100% 50%, 100% 85%,
+            100% 100%, 85% 100%, 50% 100%, 15% 100%,
+            0 100%, 0 85%, 0 50%, 0 15%);
+
+    transition: clip-path 0.5s ease;
 }
 
-@property --deg {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
+
 
 .section-icon::before {
     position: absolute;
@@ -155,15 +172,21 @@ body, header
     left: 50%;
     transform: translate(-50%, -50%);
     filter: blur(4px);
-    background-image: conic-gradient(from var(--deg), #FFFFFF, #000000);
-    opacity: 15%;
-    animation: rotating-border 4s ease-in-out infinite;
+    background-image: conic-gradient(from var(--deg), #FFFFFF var(--stop-1), #000000 var(--stop-2));
+    opacity: 25%;
+    mix-blend-mode: overlay;
+    animation: small-rotation 8s ease-in-out infinite,
+    moving-stop-points 4s ease-in-out infinite;
 }
 
-@keyframes rotating-border {
-    to{
-        --deg: 1turn;
-    }
+.section-icon:hover{
+    --indent: 2%;
+
+    clip-path: polygon(
+        0 0, 15% 0, 50% var(--indent), 85% 0,
+        100% 0, 100% 15%, calc(100% - var(--indent)) 50%, 100% 85%,
+        100% 100%, 85% 100%, 50% calc(100% - var(--indent)), 15% 100%,
+        0 100%, 0 85%, var(--indent) 50%, 0 15%);
 }
 
 .section-icon img{
@@ -176,6 +199,62 @@ body, header
 .section-highlight{
     color: var(--text-color-on-background);
     background-color: var(--primary-variant-color);
+}
+
+
+/* ________ ANIMATIONS ________ */
+@property --deg {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@property --stop-1{
+    syntax: '<percentage>';
+    initial-value: 0%;
+    inherits: false;
+}
+
+@property --stop-2{
+    syntax: '<percentage>';
+    initial-value: 60%;
+    inherits: false;
+}
+
+@keyframes rotating-border {
+    to{
+        --deg: 1turn;
+    }
+}
+
+@keyframes small-rotation{
+    0%{
+        --deg: 0deg;
+    }
+
+    50%{
+        --deg: 45deg;
+    }
+
+    100%{
+        --deg: 0deg;
+    }
+}
+
+@keyframes moving-stop-points{
+    0%{
+        --stop-1: 0%;
+        --stop-2: 60%;
+    }
+
+    50% {
+        --stop-1: 30%;
+        --stop-2: 60%;
+    }
+    100%{
+        --stop-1: 0%;
+        --stop-2: 60%;
+    }
 }
 
 .main-container
@@ -275,6 +354,21 @@ body, header
     opacity: 12%;
 }
 
+.tag-container{
+    margin-top: 6px;
+    display: flex;
+    gap: 6px;
+}
+
+.tag{
+    background-color: var(--surface-border-color);
+    color: var(--tag-color);
+    border: 1px solid var(--tag-color);
+    border-radius: var(--border-radius-element);
+    padding: 2px;
+    font-size: 14px;
+}
+
 
 
 /* ______READ MORE______*/
@@ -302,6 +396,7 @@ body, header
 
 .button {
     /* Layout */
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -309,7 +404,6 @@ body, header
     flex-grow: 1;
     min-height: 42px;
     min-width: 0;
-    position: relative;
     padding: 0;
     box-sizing: border-box;
 
@@ -320,64 +414,91 @@ body, header
     color: var(--secondary-color);
     box-shadow: var(--box-shadow-default);
 
-
-
     /* Typography */
     font-family: Consolas, monospace;
     font-size: 18px;
     font-weight: var(--font-weight-bold);
+
     /* Transitions */
     transition: 0.5s ease-in-out;
 }
 
-.button:hover
-{
-    border-color: var(--secondary-color);
+.button::before{
+    position: absolute;
+    content: '';
+    height: 114%;
+    width: 103%;
+    border-radius: var(--border-radius-element);
+    background-image: conic-gradient(from var(--deg), var(--secondary-color), var(--primary-color));
+
+    z-index: -1;
+    opacity: 0;
+
+    transition: opacity 0.3s ease-in-out;
+    animation: rotating-border 6s ease-out infinite;
 }
+
+.button:hover::before
+{
+   opacity: 100%;
+}
+
+.button:hover{
+    border-color: transparent;
+}
+
 
 .button.github
 {
-    background-color: transparent;
+    background-color: var(--surface-color);
     color: var(--secondary-color);
 }
 
-
-.github-icon{
-    color: var(--secondary-color);
+.github-icon-container{
+    height: 100%;
     padding: 2px;
     margin-right: 4px;
     max-height: 24px;
-
 }
+
+#repository_icon circle,
+#repository_icon path {
+    stroke: var(--secondary-color) !important; /* change to desired color */
+}
+
 
 .is-active-button
 {
-    background: var(--secondary-color);
+    background-color: var(--secondary-color);
     color: var(--surface-color);
+    border-color:transparent;
 }
 
-.is-active-button::before{
-    content: "";
+.is-active-button::after{
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: conic-gradient(from var(--deg), #FFFFFF, #000000);
-    opacity: 15%;
-    filter: blur(25px);
-    animation: rotating-border 4s linear infinite;
-    pointer-events: none;
+    content: '';
+    height: 75%;
+    width: 90%;
+    background-image: conic-gradient(from var(--deg), var(--secondary-color), var(--secondary-variant-color));
+    filter: blur( 8px);
+    z-index: -10;
 }
 
-.is-active-button:hover
+.is-active-button::before
 {
-    border-color: var(--surface-color);
+    position: absolute;
+    content: '';
+    height: 114%;
+    width: 104%;
+    border-radius: var(--border-radius-element);
+    background-image: conic-gradient(from var(--deg), var(--secondary-variant-color), var(--primary-middle-color));
+    /*mix-blend-mode: lighten;*/
+    z-index: -1;
+    opacity: 0;
+
+    transition: opacity 0.3s ease-in-out;
+    animation: rotating-border 6s ease-out infinite;
 }
-
-.is-active-button::before{
-    /*background: radial-gradient(circle, #FFFFFF12 25%, var(--secondary-color) 100%);*/
-    /*opacity: 55%;*/
-
-}
-
 /* ______MISC ELEMENTS______ */
 .hidden-element{
     height: 0;
@@ -410,8 +531,8 @@ body, header
     flex-shrink: 0;
     width: var(--icon-size);
     height: var(--icon-size);
-    border: 2px solid var(--text-color-on-background);
-    opacity: 7%;
+    border: 2px solid var(--surface-color);
+    /*opacity: 7%;*/
     transform: translateY(-50%) rotate(45deg);
 
     display: flex;
@@ -434,19 +555,19 @@ body, header
     )); /*2xp for border width offset*/
 
     border: 2px solid;
-    border-color: var(--text-color-on-background);
+    border-color: var(--surface-color);
     border-radius: 50%;
     transform: translateY(-50%);
 
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 7%;
+    /*opacity: 7%;*/
 }
 
 .selection-line{
     position: absolute;
-    border-color: var(--text-color-on-background);
+    color: var(--surface-color);
     left: 100%;
     border: 1px solid;
     width: calc(var(--main-container-horizontal-padding) - (var(--selection-circle-size)/2));
@@ -456,31 +577,54 @@ body, header
 }
 
 .selection-animation-active{
-    transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out, opacity 0.5s ease-in-out;
+    transition: border-color
+        0.5s ease-in-out,
+        background-color 0.5s ease-in-out,
+        box-shadow 0.5s ease-in-out,
+        opacity 0.5s ease-in-out;
 }
 .selection-animation-inactive{
-    transition: border-color 0.7s ease-in-out, background-color 0.7s ease-in-out, opacity 0.5s ease-in-out;
+    transition: border-color 0.7s ease-in-out,
+    background-color 0.7s ease-in-out,
+    box-shadow 0.7s ease-in-out,
+    opacity 0.5s ease-in-out;
 }
 
 .selection-highlight{
     background-color: var(--secondary-color);
-    opacity: 100%;
     box-shadow: var(--box-glow-highlight);
-
+    opacity: var(--opacity-value);
+    animation: opacity-pulse 6s ease-in-out infinite;
 
 }
 
 .selection-highlight-border{
     border-color: var(--secondary-color);
-    opacity: 100%;
     box-shadow: var(--box-glow-highlight);
+    opacity: var(--opacity-value);
+    animation: opacity-pulse 6s ease-in-out infinite;
 }
 
-/*.icon:hover{*/
-/*    transform: rotate(360deg);*/
-/*    transition: 0.5s ease-in-out;*/
+@property --opacity-value {
+    syntax: '<percentage>';
+    initial-value: 100%;
+    inherits: false;
+}
 
-/*}*/
+
+@keyframes opacity-pulse {
+    0%{
+        --opacity-value: 100%;
+    }
+    50%{
+        --opacity-value: 85%;
+    }
+    100%{
+        --opacity-value: 100%;
+    }
+}
+
+
 
 
 

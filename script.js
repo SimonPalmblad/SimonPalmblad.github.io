@@ -1,4 +1,6 @@
+
 let cachedCSS = null;
+
 
 /**
 * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
@@ -40,7 +42,6 @@ class ProjectPreviewTemplate extends HTMLElement
         leftBar.classList.add('description-element-sidebar');
         leftBar.classList.add('selection-sidebar');
         leftBar.classList.add('selection-animation-inactive');
-        // leftBar.classList.add('hidden-element');
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
@@ -49,6 +50,11 @@ class ProjectPreviewTemplate extends HTMLElement
         descriptionTitle.className = 'description-title';
         descriptionTitle.textContent = this.getAttribute('title');
 
+        const tagContainer = document.createElement('div');
+        tagContainer.className = 'tag-container';
+
+        const tagsAttr = this.getAttribute('tags' || '');
+        const descriptionTags = CreateTagsFromAttribute(tagsAttr);
 
         const description = document.createElement('p');
         description.className = 'description';
@@ -64,7 +70,7 @@ class ProjectPreviewTemplate extends HTMLElement
         const selectionIndicatorInner = CreateSelectionIndicatorInner(descriptionElement);
 
         const readMoreResult = CreateReadMoreElement(
-            loremIpsum,
+            this.getAttribute('long-description') || loremIpsum,
             this.getAttribute('target-url') || 'no_URL',
             [leftBar],
             [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine]);
@@ -77,7 +83,17 @@ class ProjectPreviewTemplate extends HTMLElement
 
         /// -------- CREATE HTML TREE -------- ///
         descriptionContainer.appendChild(descriptionTitle);
+        descriptionContainer.appendChild(tagContainer);
+
+        if(descriptionTags !== null) {
+            for (let tag of descriptionTags)
+            {
+                tagContainer.appendChild(tag)
+            }
+        }
+
         descriptionContainer.appendChild(description);
+
         descriptionContainer.appendChild(readMoreResult.buttonContainer);
         descriptionContainer.appendChild(readMoreResult.readMoreContainer);
         
@@ -134,16 +150,17 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
     const showMoreText = "Show more";
     const showLessText = "Show less";
 
+    const readMoreContainer = document.createElement('div');
+    readMoreContainer.className = 'read-more';
+    readMoreContainer.classList.add('hidden-element');
+
+    /* __________ CREATE BUTTON ELEMENTS __________ */
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'button-container';
 
     const buttonReadMore = document.createElement('button');
     buttonReadMore.className = 'button';
     buttonReadMore.textContent = showMoreText;
-
-    const readMoreContainer = document.createElement('div');
-    readMoreContainer.className = 'read-more';
-    readMoreContainer.classList.add('hidden-element');
 
     const buttonURL = document.createElement('button');
     buttonURL.className = 'button';
@@ -154,9 +171,15 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
     buttonURLText.textContent = 'Project repository';
 
 
-    const buttonURLIcon = document.createElement('img');
-    buttonURLIcon.className = 'github-icon';
-    buttonURLIcon.src = 'images/SVGs/repository_icon.svg';
+    const buttonUrlIcon = document.createElement('div');
+    buttonUrlIcon.className = 'github-icon-container';
+    fetch('images/SVGs/repository_icon.svg')
+        .then(response => response.text())
+        .then(svgText =>{
+            buttonUrlIcon.innerHTML = svgText;
+        })
+        .catch(error => console.log('Error loading Repository Icon SVG', error));
+
 
     const readMoreText = document.createElement('p');
     readMoreText.textContent = textContent;
@@ -190,7 +213,8 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
         }
     });
 
-    buttonURL.appendChild(buttonURLIcon);
+    // buttonUrlIcon.appendChild(buttonURLImg);
+    buttonURL.appendChild(buttonUrlIcon);
     buttonURL.appendChild(buttonURLText);
 
     buttonContainer.appendChild(buttonReadMore);
@@ -216,6 +240,28 @@ function CreateSelectionIndicatorInner(parent)
 
     selectionCircle.appendChild(selectionLine);
     return {selectionCircle, selectionLine};
+}
+
+function CreateTag(content){
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.textContent = content;
+    return tag;
+}
+
+function CreateTagsFromAttribute(attribute){
+    if(!attribute){
+        return null;
+    }
+    const tagsArray = attribute.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    const tags = [];
+
+    for(let tag of tagsArray)
+    {
+        tags.push(CreateTag(tag));
+    }
+
+    return tags;
 }
 
 function GoToURL(url)
