@@ -160,11 +160,14 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
 
     const buttonReadMore = document.createElement('button');
     buttonReadMore.className = 'button';
+    buttonReadMore.classList.add('custom-hover');
     buttonReadMore.textContent = showMoreText;
 
     const buttonURL = document.createElement('button');
     buttonURL.className = 'button';
     buttonURL.classList.add('github');
+    buttonURL.classList.add('custom-hover');
+
     buttonURL.addEventListener('click', () => GoToURL(targetURL))
 
     const buttonURLText = document.createElement('span');
