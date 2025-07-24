@@ -58,6 +58,11 @@ body, header
     margin: 0;
 }
 
+h3{
+    font-weight: normal;
+    margin: 6px 0;
+}
+
 .header
 {
 
@@ -128,8 +133,8 @@ p{
 #header-title{
     margin: 0;
     font-weight: var(--font-weight-bold);
-    font-size: 33px;
-    letter-spacing: 12px;
+    font-size: 2em;
+    letter-spacing: 0.7em;
     color: var(--text-color-on-surface);
 }
 
@@ -139,28 +144,9 @@ p{
     align-content: center;
     justify-content: center;
     color: var(--text-color-on-surface);
-    gap: 12px;
+    gap: 24px;
     opacity: 100%;
     z-index: 1;
-}
-
-.contact-element img{
-    /*--size: 24px;*/
-    height: 80%;
-    width: auto;
-    /*max-width: var(--size);*/
-    align-self: center;
-    justify-self: center;
-}
-
-.contact-element-icon{
-    display: flex;
-    --size: 24px;
-    height: var(--size);
-    width: var(--size);
-
-    justify-content: center;
-    align-items: center;
 }
 
 .contact-element{
@@ -168,21 +154,23 @@ p{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 4px 6px;
-    min-width: 0;
-
-    background-color: var(--surface-color);
-    color: var(--text-color-on-surface);
-
-    border: 1px solid var(--tag-color);
-    border-radius: var(--border-radius-element);
-
-    font-size: 14px;
-    text-decoration: none;
 }
 
-.contact-element:hover{
+.contact-element-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*height: 100%;*/
+    --size: 32px;
+    height: var(--size);
+    width: var(--size);
+    padding: 0;
+    /*border: var(--surface-border-color) 1px solid;*/
+    border-radius: var(--border-radius-element);
+    fill: var(--background-color);
+    box-shadow: var(--box-shadow-default);
+}
+.contact-element-icon:hover{
     border-color: transparent;
 }
 
@@ -227,8 +215,6 @@ p{
 
     transition: clip-path 0.5s ease;
 }
-
-
 
 .section-icon::before {
     position: absolute;
@@ -449,7 +435,8 @@ p{
 .read-more{
     border-radius: var(--border-radius-element);
     position: relative;
-    padding: 1px 16px; /* <p> element has top/bot margin of 16px*/
+    text-align: justify;
+    padding: 1px 24px; /* <p> element has top/bot margin of 16px*/
     margin: 12px 0;
     box-shadow: var(--box-shadow-default);
 }

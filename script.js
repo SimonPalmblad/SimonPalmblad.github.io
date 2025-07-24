@@ -6,6 +6,7 @@ let cachedCSS = null;
 * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
 * @param {string} target-url - the URL to open.
  * @param {string} button-text - the string description.
+ * @param {string[]} tag - the string tags to add to this module.
  * */
 class ProjectPreviewTemplate extends HTMLElement
 {
@@ -185,7 +186,7 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
 
 
     const readMoreText = document.createElement('p');
-    readMoreText.textContent = textContent;
+    readMoreText.innerHTML = textContent;
 
     /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
 
