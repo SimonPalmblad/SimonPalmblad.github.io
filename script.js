@@ -168,6 +168,7 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
     buttonURL.className = 'button';
     buttonURL.classList.add('github');
     buttonURL.classList.add('custom-hover');
+    buttonURL.title = targetURL;
 
     buttonURL.addEventListener('click', () => GoToURL(targetURL))
 

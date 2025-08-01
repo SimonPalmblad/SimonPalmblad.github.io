@@ -15,7 +15,6 @@
     <div class="header-pattern">
         <div class="header-contact">
 
-            <!--href="https://www.linkedin.com/in/simon-palmblad-182a48165/"-->
             <a class="contact-element custom-hover" href="mailto:simon.palmblad@live.se">
                 <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" class="contact-element-icon">
                     <use xlink:href="#mail_icon"></use>
@@ -28,17 +27,17 @@
                 </svg>
             </a>
 
-<!--            <a class="contact-element custom-hover" href="https://www.linkedin.com/in/simon-palmblad-182a48165/">-->
-<!--                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" class="contact-element-icon">-->
-<!--                    <use xlink:href="#linked_in_icon"></use>-->
-<!--                </svg>-->
-<!--            </a>-->
-
-            <a class="contact-element custom-hover" >
+            <a class="contact-element custom-hover" href="https://www.linkedin.com/in/simon-palmblad-182a48165/">
                 <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" class="contact-element-icon">
-                    <use xlink:href="#cv_icon"></use>
+                    <use xlink:href="#linked_in_icon"></use>
                 </svg>
             </a>
+
+<!--            <a class="contact-element custom-hover" >-->
+<!--                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" class="contact-element-icon">-->
+<!--                    <use xlink:href="#cv_icon"></use>-->
+<!--                </svg>-->
+<!--            </a>-->
         </div>
     </div>
 
@@ -54,22 +53,24 @@
         <p>></p>
     </div>
 
-<!--    <project-preview-template-->
-<!--        title="Unity Inspector Lock"-->
-<!--        description="A custom Unity Editor tool. Adds a lock button to GameObject variable(s) to enable/disable editing via the interface."-->
-<!--        target-url="https://www.bing.com/"-->
-<!--        tags="C#, Unity, editor-tool"-->
-<!--        long-description="<h3>Features</h3>    ◽ Lock the UI of any variable in the Unity Inspector.-->
-<!--    ◽ Integration with Unity's official UI Toolkit system.-->
-<!--    ◽ Context menu for quickly creating new lockable assets.-->
-<!--    ◽ Settings and styling options for lockable assets.-->
+    <project-preview-template
+        title="Unity Inspector Lock"
+        target-url="https://github.com/SimonPalmblad/InspectorLockButton"
+        tags="C#, Unity, editor-tool"
+        description="A custom Unity Editor tool. Adds a lock button to GameObject variable(s) to enable/disable editing via the interface."
+        long-description="<h3>Features</h3>    ◽ Lock the UI of any variable in the Unity Inspector.
+    ◽ Integration with Unity's official UI Toolkit system.
+    ◽ Context menu for quickly creating new lockable assets.
+    ◽ Settings and styling options for lockable assets.
 
-<!--This tool provides fine-control over variables within the Unity Editor. A locked asset cannot be edited in the Inspector UI, preventing accidental changes or indicating that it should not be changed/edited. The plugin does not require any knowledge of the Unity UI Toolkit for most uses. UI Toolkit customization is only required if you want to customize which variables can be locked or organize lockable variables into different lock groups within an asset.-->
-<!--        ">-->
-<!--    </project-preview-template>-->
+This tool provides fine-control over variables within the Unity Editor. A locked asset cannot be edited in the Inspector UI, preventing accidental changes or indicating that it should not be changed/edited. The plugin does not require any knowledge of the Unity UI Toolkit for most uses. UI Toolkit customization is only required if you want to customize which variables can be locked or organize lockable variables into different lock groups within an asset.
+        ">
+    </project-preview-template>
 
     <project-preview-template
-        title="String FlexBox"
+        title="String Flex Box"
+        target-url="https://github.com/SimonPalmblad/StringFlexBox"
+        tags="C#, string-formatting"
         description="A code library for creating dynamic textboxes around strings to be used in the console."
 long-description="<h3>Features</h3>    ◽ An easy-to-use code library for creating flexible textboxes.
     ◽ Automatic word-wrapping functionality.
@@ -78,22 +79,19 @@ long-description="<h3>Features</h3>    ◽ An easy-to-use code library for creat
     ◽ Can be resized after creation.
 
 The library takes inspiration from the CSS FlexBox layout model. I created this library for a text-based, console-only project I'm working on. I wanted a way of organizing and neatly displaying text and ran in to issues using the normal methods when I wanted to arrange two textboxes next to each other.
-"
-        target-url="https://github.com/SimonPalmblad/StringFlexBox"
-        tags="C#, string-formatting">
-    </project-preview-template>
+"></project-preview-template>
 
     <project-preview-template
     title="Unity 2D Sprite Shape Animator"
+    target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
+    tags=" C#, Unity, editor-tool, extension"
     description="An extension to Unity's 2D Sprite Shape (2D vector graphic objects). Adds functionality for animating Sprite Shapes via the Editor Timeline tool."
     long-description="<h3>Features</h3>    ◽ Custom UI for the Unity Editor.
     ◽ Context sensitive toolbar button.
     ◽ Context-menu default asset creation.
 
 In the default implementation of Unity's 2D Sprite Shapes it's impossible to animate a point moving using the Animation timeline. I wanted a way of easily creating animations without explicitly coding each point movement manually. Therefore I created my own tool for it that allows for a much simpler and user-friendly approach to creating animations using Sprite Shapes."
-    target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
-    tags=" C#, Unity, editor-tool, extension">
-    </project-preview-template>
+    ></project-preview-template>
 </div>
 
 <!--MAIL ICON -->
