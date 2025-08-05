@@ -70,11 +70,13 @@ class ProjectPreviewTemplate extends HTMLElement
 
         const selectionIndicatorInner = CreateSelectionIndicatorInner(descriptionElement);
 
-        const readMoreResult = CreateReadMoreElement(
-            this.getAttribute('long-description') || loremIpsum,
-            this.getAttribute('target-url') || 'no_URL',
-            [leftBar],
-            [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine]);
+        const readMoreElement = CreateReadMoreElement({
+            textContent: this.getAttribute('long-description') || loremIpsum,
+            targetURL: this.getAttribute('target-url') || 'no_URL',
+            highlights: [leftBar],
+            highlightBorders: [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine],
+            linkButtonText: this.getAttribute('link-button-text') || ''
+            });
 
         // Center SelectionDiamond vertically in relation to DescriptionElement
         requestAnimationFrame(() => {
@@ -95,8 +97,8 @@ class ProjectPreviewTemplate extends HTMLElement
 
         descriptionContainer.appendChild(description);
 
-        descriptionContainer.appendChild(readMoreResult.buttonContainer);
-        descriptionContainer.appendChild(readMoreResult.readMoreContainer);
+        descriptionContainer.appendChild(readMoreElement.buttonContainer);
+        descriptionContainer.appendChild(readMoreElement.readMoreContainer);
         
         descriptionElement.appendChild(selectionIndicatorInner.selectionCircle);
         descriptionElement.appendChild(selectionDiamond);
@@ -143,11 +145,27 @@ function AnimateContainerExpansion(resizedContainer){
  * Read More expands/collapses a paragraph of text.
  * @param {string} textContent - string text to show when Read More is clicked.
  * @param {string} targetURL - the URL to open.
- * @param {*[]} highlights - the HTML elements to highlight when Read More is active.
- * @param {*[]} highlightBorders - the HTML elements to add highlighted borders to when Read More is active.
+ * @param options - Optional parameters.
+ * @param {*[]} options.highlights - the HTML elements to highlight when Read More is active.
+ * @param {*[]} options.highlightBorders - the HTML elements to add highlighted borders to when Read More is active.
+ * @param {string} options.linkButtonText - the string to display on the external link button. 'Project repository' default.
  * */
-function CreateReadMoreElement(textContent, targetURL, highlights = [], highlightBorders = [] )
+
+function CreateReadMoreElement({textContent, targetURL, ...options } = {})
 {
+    const defaults = {
+        highlights: [],
+        highlightBorders: [],
+        linkButtonText: 'Project repository'
+    }
+
+    const sanitizedOptions =
+        Object.fromEntries((Object.entries(options)
+                                  .filter(([_, value]) => value !== '')))
+
+    const settings = {...defaults, ...sanitizedOptions};
+
+
     const showMoreText = "Show more";
     const showLessText = "Show less";
 
@@ -173,7 +191,7 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
     buttonURL.addEventListener('click', () => GoToURL(targetURL))
 
     const buttonURLText = document.createElement('span');
-    buttonURLText.textContent = 'Project repository';
+    buttonURLText.textContent = settings.linkButtonText;
 
 
     const buttonUrlIcon = document.createElement('div');
@@ -192,16 +210,15 @@ function CreateReadMoreElement(textContent, targetURL, highlights = [], highligh
     /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
 
     buttonReadMore.addEventListener('click', () => {
-        console.log('clicked');
         const isActive = buttonReadMore.classList.toggle('is-active-button');
 
-        for (let highlight of highlights) {
+        for (let highlight of settings.highlights) {
             highlight.classList.toggle('selection-highlight');
             highlight.classList.toggle('selection-animation-active');
             highlight.classList.toggle('selection-animation-inactive');
         }
 
-        for (let border of highlightBorders) {
+        for (let border of settings.highlightBorders) {
             border.classList.toggle('selection-highlight-border');
             border.classList.toggle('selection-animation-active');
             border.classList.toggle('selection-animation-inactive');
