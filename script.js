@@ -13,7 +13,7 @@ let cachedCSS = null;
 
 const headerElements = document.querySelector('.header');
 const desktopHeader = headerElements.querySelector('.header-desktop');
-const rect = desktopHeader.getBoundingClientRect();
+const rect = headerElements.getBoundingClientRect();
 const desktopPattern = headerElements.querySelector('.header-pattern');
 const patternRect = desktopPattern.getBoundingClientRect();
 const height = rect.height - patternRect.height;
@@ -26,41 +26,38 @@ window.addEventListener('scroll', () => {
     // const currentScrollPosition = maxHeight - window.innerHeight;
 
     // console.log(`Document current scroll height is: ${currentScrollPosition}`);
-    // console.log(`Header height is: ${height}`);
+    console.log(`Header height is: ${height}`);
+    console.log(`Pattern rect height is: ${patternRect.height}`);
     // console.log(`Scroll position is: ${window.scrollY}`);
 
     if((window.scrollY > height )&& !passedCollapsePoint){
-        CollapseDesktopHeader(desktopHeader);
-        // desktopSmallHeader.classList.remove('hidden-element');
-        // desktopLargeHeader.classList.add('hidden-element');
+        CollapseDesktopHeader(headerElements);
         console.log('collapsed header');
-        passedCollapsePoint = true;
     }
 
     if((window.scrollY < height) && passedCollapsePoint){
-        // desktopSmallHeader.classList.add('hidden-element');
-        // desktopLargeHeader.classList.remove('hidden-element');
-        ExpandDesktopHeader(desktopHeader);
-        passedCollapsePoint = false;
+        ExpandDesktopHeader(headerElements);
         console.log('returned to top');
-
     }
 
 })
 
-function CollapseDesktopHeader(headerElement){
-    const title = headerElement.querySelector('.header-title');
-    const patternTop = headerElement.querySelector('.header-pattern');
+function CollapseDesktopHeader(headerElement, elementsToHide){
+    // headerElement.classList.add('header-collapsed');
     headerElement.style.position = 'sticky';
-    title.style.display = 'none';
-    patternTop.style.display = 'none';
-
+    headerElement.style.transform = `translateY(-${height}px)`;
+    passedCollapsePoint = true;
+    // window.scrollBy({top: -height +1});
 }
 
-function ExpandDesktopHeader(headerElement){
+function ExpandDesktopHeader(headerElement, elementsToHide){
     const title = headerElement.querySelector('.header-title');
     const patternTop = headerElement.querySelector('.header-pattern');
     headerElement.style.position = 'relative';
+    headerElement.style.transform = 'translateY(0)';
+
+    passedCollapsePoint = false;
+
     title.style.display = 'block';
     patternTop.style.display = 'flex';
 }

@@ -87,8 +87,8 @@ h3{
     top: 0;
     z-index: 100;
     text-align: center;
-    /*background-color: var(--primary-variant-color);*/
     background-color: var(--primary-variant-color);
+    border-bottom: 0.25rem solid var(--background-color);
 }
 
 .header::before{
@@ -96,10 +96,10 @@ h3{
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #FFFFFF12 25%,
-    #FFFFFF17 75%
+        to right,
+        transparent 0%,
+        #FFFFFF12 25%,
+        #FFFFFF17 75%
     );
     pointer-events: none;
 }
