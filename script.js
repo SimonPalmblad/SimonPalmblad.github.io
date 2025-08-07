@@ -1,67 +1,77 @@
 
 let cachedCSS = null;
 
+window.addEventListener('load', () => {})
+{
+    // const mobileQuery = window.matchMedia('(max-width: 858px)');
+    const headerElements = document.querySelector('.header');
+    const title = headerElements.querySelector('.header-title');
+    const contactElement = headerElements.querySelector('.header-contact');
+    const patternTop = headerElements.querySelector('.header-pattern');
+
+    let patternRect = contactElement.clientHeight;
+    let headerRect = headerElements.clientHeight;
+    let height = headerRect - patternRect;
+
+    let passedCollapsePoint = false;
+
+    updateMeasurements();
+
+    window.addEventListener('scroll', () => {
+        updateMeasurements();
+
+        if((window.scrollY > height) && !passedCollapsePoint){
+            CollapseDesktopHeader(headerElements);
+        }
+
+        if((window.scrollY < height) && passedCollapsePoint){
+            ExpandDesktopHeader(headerElements);
+        }
+    })
+
+    /* Event to keep header in correct place when resizing */
+    window.addEventListener('resize', () => {
+        if(passedCollapsePoint){
+            updateMeasurements();
+            CollapseDesktopHeader(headerElements);
+        }
+    })
+
+    function updateMeasurements(){
+        headerRect = document.querySelector('.header').clientHeight;
+        patternRect = contactElement.clientHeight;
+        height = headerRect - patternRect;
+        console.log(`Total height is: ${headerRect}`);
+        console.log(`Header height: ${height}`);
+        console.log(`Pattern height: ${patternRect}`);
+    }
+
+    function CollapseDesktopHeader(headerElement){
+        headerElement.style.position = 'sticky';
+        headerElement.style.transform = `translateY(-${height}px)`;
+        passedCollapsePoint = true;
+    }
+
+    function ExpandDesktopHeader(headerElement) {
+        headerElement.style.position = 'relative';
+        headerElement.style.transform = 'translateY(0)';
+
+        title.style.display = 'block';
+        patternTop.style.display = 'flex';
+
+        passedCollapsePoint = false;
+    }
+}
+
+
+
+
 /**
-* Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
-* @param {string} target-url - the URL to open.
+ * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
+ * @param {string} target-url - the URL to open.
  * @param {string} button-text - the string description.
  * @param {string[]} tag - the string tags to add to this module.
  * */
-
-
-
-
-const headerElements = document.querySelector('.header');
-const desktopHeader = headerElements.querySelector('.header-desktop');
-const rect = headerElements.getBoundingClientRect();
-const desktopPattern = headerElements.querySelector('.header-pattern');
-const patternRect = desktopPattern.getBoundingClientRect();
-const height = rect.height - patternRect.height;
-
-let passedCollapsePoint = false;
-
-window.addEventListener('scroll', () => {
-
-    // const maxHeight = document.documentElement.scrollHeight;
-    // const currentScrollPosition = maxHeight - window.innerHeight;
-
-    // console.log(`Document current scroll height is: ${currentScrollPosition}`);
-    console.log(`Header height is: ${height}`);
-    console.log(`Pattern rect height is: ${patternRect.height}`);
-    // console.log(`Scroll position is: ${window.scrollY}`);
-
-    if((window.scrollY > height )&& !passedCollapsePoint){
-        CollapseDesktopHeader(headerElements);
-        console.log('collapsed header');
-    }
-
-    if((window.scrollY < height) && passedCollapsePoint){
-        ExpandDesktopHeader(headerElements);
-        console.log('returned to top');
-    }
-
-})
-
-function CollapseDesktopHeader(headerElement, elementsToHide){
-    // headerElement.classList.add('header-collapsed');
-    headerElement.style.position = 'sticky';
-    headerElement.style.transform = `translateY(-${height}px)`;
-    passedCollapsePoint = true;
-    // window.scrollBy({top: -height +1});
-}
-
-function ExpandDesktopHeader(headerElement, elementsToHide){
-    const title = headerElement.querySelector('.header-title');
-    const patternTop = headerElement.querySelector('.header-pattern');
-    headerElement.style.position = 'relative';
-    headerElement.style.transform = 'translateY(0)';
-
-    passedCollapsePoint = false;
-
-    title.style.display = 'block';
-    patternTop.style.display = 'flex';
-}
-
 class ProjectPreviewTemplate extends HTMLElement
 {
     constructor(){
