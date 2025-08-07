@@ -4,14 +4,22 @@ let cachedCSS = null;
 window.addEventListener('load', () => {})
 {
     // const mobileQuery = window.matchMedia('(max-width: 858px)');
-    const headerElements = document.querySelector('.header');
-    const title = headerElements.querySelector('.header-title');
-    const contactElement = headerElements.querySelector('.header-contact');
-    const patternTop = headerElements.querySelector('.header-pattern');
+    const headerElement = document.querySelector('.header');
+    const headerPattern = headerElement.querySelector('.header-pattern');
+    const contactContainer = headerElement.querySelector('.contact-container');
 
-    let patternRect = contactElement.clientHeight;
-    let headerRect = headerElements.clientHeight;
-    let height = headerRect - patternRect;
+    const headerInfo = document.querySelector('.header-info');
+    const headerPortrait = document.querySelector('.header-portrait');
+    const headerPortraitImage = headerPortrait.querySelector('img');
+    const headerPortraitText = document.querySelector('.header-portrait-text');
+
+    let shadowContact = null;
+    let linkContainer = null;
+
+    let headerPortraitDefaultMax = getComputedStyle(headerPortrait).maxHeight;
+    let headerPatternHeight = headerPattern.clientHeight;
+    let headerRect = headerElement.clientHeight;
+    let height = null;
 
     let passedCollapsePoint = false;
 
@@ -21,11 +29,11 @@ window.addEventListener('load', () => {})
         updateMeasurements();
 
         if((window.scrollY > height) && !passedCollapsePoint){
-            CollapseDesktopHeader(headerElements);
+            CollapseDesktopHeader(headerElement);
         }
 
         if((window.scrollY < height) && passedCollapsePoint){
-            ExpandDesktopHeader(headerElements);
+            ExpandDesktopHeader(headerElement);
         }
     })
 
@@ -33,22 +41,81 @@ window.addEventListener('load', () => {})
     window.addEventListener('resize', () => {
         if(passedCollapsePoint){
             updateMeasurements();
-            CollapseDesktopHeader(headerElements);
+            CollapseDesktopHeader(headerElement);
         }
     })
 
+    /* Collapsed portrait click event */
+    headerPortrait.addEventListener('click', () => {
+        headerPortraitImage.classList.remove('no-transitions');
+        headerPortraitImage.classList.toggle('hidden-image');
+        TryGetShadowContact();
+    })
+
+    headerPortraitImage.addEventListener('transitionstart', () => {
+        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+        if(!isHidden){
+            headerPortraitText.classList.add('hidden-portrait-text');
+        }
+    })
+
+    headerPortraitImage.addEventListener('transitionend', () => {
+        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+        if(isHidden){
+            headerPortraitText.classList.remove('hidden-portrait-text');
+        }
+    });
+
     function updateMeasurements(){
+        headerPatternHeight = headerPattern.clientHeight;
         headerRect = document.querySelector('.header').clientHeight;
-        patternRect = contactElement.clientHeight;
-        height = headerRect - patternRect;
-        console.log(`Total height is: ${headerRect}`);
-        console.log(`Header height: ${height}`);
-        console.log(`Pattern height: ${patternRect}`);
+        height = headerRect - headerPatternHeight;
+
+        if(headerPortraitImage.classList.contains('header-image-collapsed')){
+            return;
+        }
+
+        headerPortraitDefaultMax = getComputedStyle(headerPortrait).maxHeight;
     }
 
     function CollapseDesktopHeader(headerElement){
-        headerElement.style.position = 'sticky';
-        headerElement.style.transform = `translateY(-${height}px)`;
+
+        if(TryGetShadowContact()){
+
+            headerPortrait.classList.remove('animate-grow');
+
+            headerPortraitImage.classList.remove('header-image-expanded');
+            headerPortraitImage.classList.add('header-image-collapsed')
+            headerPortraitImage.classList.add('hidden-image');
+
+            headerPortraitText.classList.remove('hidden-portrait-text');
+
+            headerPortrait.style.maxHeight = linkContainer.clientHeight + 'px';
+
+            /*Get height of header*/
+            let headerInfoHeight = headerInfo.getBoundingClientRect();
+            let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
+            console.log(`Header info height: ${headerInfoHeight.height}`);
+            console.log(`New max height: ${headerPortrait.style.maxHeight}`);
+            console.log(`Vertical center offset: ${verticalCenterOffset}`);
+            let portraitTranslation = headerInfoHeight.height - headerPortrait.clientHeight - verticalCenterOffset;
+            console.log(`Portrait translation: ${portraitTranslation}`);
+            headerPortrait.style.transform = `translateY(${portraitTranslation}px)`;
+
+            updateMeasurements();
+
+            headerElement.style.position = 'sticky';
+            headerElement.style.transform = `translateY(-${height}px)`;
+
+            let rightMargin = parseInt(getComputedStyle(linkContainer).marginRight ??= "0") ; /*Margin offset*/
+            const contactXMove = (contactContainer.clientWidth - linkContainer.clientWidth) - (rightMargin * 2);
+            console.log(`Contact container width: ${contactXMove}`);
+            linkContainer.style.transform = `translateX(${contactXMove}px)`;
+        }
+
+        console.log(`Header port max-height: ${headerPortraitDefaultMax}`);
         passedCollapsePoint = true;
     }
 
@@ -56,15 +123,44 @@ window.addEventListener('load', () => {})
         headerElement.style.position = 'relative';
         headerElement.style.transform = 'translateY(0)';
 
-        title.style.display = 'block';
-        patternTop.style.display = 'flex';
+        if(TryGetShadowContact()){
+            linkContainer.style.transform = `translateX(0)`;
+        }
+
+        headerPortrait.classList.add('animate-grow');
+        headerPortrait.style.transform = 'translateY(0)';
+        headerPortrait.style.maxHeight = `${headerPortraitDefaultMax}`;
+
+        headerPortraitImage.classList.add('no-transitions');
+        headerPortraitImage.classList.add('header-image-expanded');
+        headerPortraitImage.classList.remove('header-image-collapsed');
+        headerPortraitImage.classList.remove('hidden-image');
+
+        headerPortraitText.classList.add('hidden-portrait-text');
 
         passedCollapsePoint = false;
     }
+
+    function TryGetShadowContact(){
+        if(linkContainer !== null){
+            // console.log('Shadow contact found');
+            return true;
+        }
+
+        if(shadowContact === null){
+            shadowContact = document.querySelector('header-contact-links');
+            // console.log('Getting shadow contact root.');
+        }
+
+        if(shadowContact.shadowRoot !== null) {
+            // console.log('Shadow contact shadowRoot found');
+            linkContainer = shadowContact.shadowRoot.querySelector('.header-contact');
+        }
+
+        console.log(`Link container is available: ${linkContainer !== null}`)
+        return linkContainer !== null;
+    }
 }
-
-
-
 
 /**
  * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
@@ -228,11 +324,13 @@ class HeaderContactLinks extends HTMLElement {
         `;
         this.shadowRoot.appendChild(svgDefs);
 
-
-
         // Create the elements
-        const container = document.createElement('div');
-        container.className = 'header-contact';
+        // const container = document.createElement('div');
+        // container.className = 'contact-container';
+
+        const linkContainer = document.createElement('div');
+        linkContainer.className = 'header-contact';
+        linkContainer.id = 'link-container';
 
         const links = [
             {
@@ -264,10 +362,9 @@ class HeaderContactLinks extends HTMLElement {
 
             svg.appendChild(use);
             a.appendChild(svg);
-            container.appendChild(a);
+            linkContainer.appendChild(a);
         });
-
-        this.shadowRoot.appendChild(container);
+        this.shadowRoot.appendChild(linkContainer);
     }
 
 }

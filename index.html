@@ -7,26 +7,39 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 </head>
 
 <body>
-
-
 <header class="header">
-    <div class ="header-mobile">
-            <div class ="title-element-mobile">
-                <p class="mobile-header-title">simon palmblad</p>
+<!--    <div class ="header-mobile">-->
+<!--            <div class ="title-element-mobile">-->
+<!--                <p class="mobile-header-title">simon palmblad</p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="header-desktop">-->
+<!--        <div class="header-pattern"></div>-->
+<!--        <p class="header-title">Simon Palmblad</p>-->
+<!--    </div>-->
+    <div class="header-info">
+        <div class ="header-portrait">
+            <img class="no-transitions" src="images/portrait.png" alt="portrait">
+            <p class ="hidden-portrait-text header-portrait-text">Press</p>
         </div>
+
+        <div class ="header-text">
+            <p class="header-title">
+                Simon Palmblad
+            </p>
+            <p class="header-description">I love creating usable applications, developer tools and getting lost in the details of a project.</p>
+        </div>
+
     </div>
 
-    <div class="header-desktop">
-        <div class="header-pattern"></div>
-        <p class="header-title">Simon Palmblad</p>
-    </div>
-
-    <div class="header-contact header-pattern">
-        <header-contact-links></header-contact-links>
+    <div class="header-pattern">
+        <div class="contact-container">
+            <header-contact-links></header-contact-links>
+        </div>
     </div>
 </header>
 
@@ -45,10 +58,10 @@
 <!--            target-url="https://www.sonigon.com/sonity/"-->
 <!--            link-button-text="To website"-->
 <!--            tags="C#, Unity, Plugin integration"-->
-<!--            description="Independent development of a C# system that integrated two third party Unity plugins enabling seamlessly integration of one plugin within the other plugin's ecosystem."-->
+<!--            description="Independent development of a C# system that integrated two third party Unity plugins enabling seamless integration of one plugin within the other plugin's ecosystem."-->
 <!--            long-description="I was contracted to integrate Sonity - an audio middleware plugin - in PlayMaker's visual scripting interface.-->
 <!--    ◽ Custom UI elements.-->
-<!--    ◽ Additions to the official documentation.-->
+<!--    ◽ Additions to the official documentation."-->
 <!--"-->
 <!--    >-->
 
@@ -93,7 +106,7 @@ The library takes inspiration from the CSS FlexBox layout model. I created this 
 "></project-preview-template>
 
     <project-preview-template
-    title="Unity 2D Sprite Shape Animator"
+    title="Unity Animation Tool"
     target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
     tags=" C#, Unity, editor-tool, extension"
     description="An extension to Unity's 2D Sprite Shape (2D vector graphic objects). Adds functionality for animating Sprite Shapes via the Editor Timeline tool."
