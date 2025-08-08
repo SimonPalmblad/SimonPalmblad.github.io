@@ -271,7 +271,7 @@ p{
 .scaling-text-svg text{
     fill: var(--text-color-on-surface);
     font-weight: var(--font-weight-bold);
-    font-family: var(--font-family);
+    font-family: var(--font-family) sans-serif;
     letter-spacing: 0.7rem;
     margin-bottom: 1rem;
 }
