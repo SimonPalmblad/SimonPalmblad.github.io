@@ -117,15 +117,15 @@ window.addEventListener('load', () => {})
             let headerInfoHeight = headerInfo.getBoundingClientRect();
             let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
 
-            console.log(`Header info height: ${headerInfoHeight.height}`);
-            console.log(`New max height: ${headerPortrait.style.maxHeight}`);
-            console.log(`Vertical center offset: ${verticalCenterOffset}`);
-            let mobileHeaderHeight = mobileHeaderTitle.clientHeight;
-            console.log(`Mobile header height: ${mobileHeaderHeight}`);
+            // console.log(`Header info height: ${headerInfoHeight.height}`);
+            // console.log(`New max height: ${headerPortrait.style.maxHeight}`);
+            // console.log(`Vertical center offset: ${verticalCenterOffset}`);
+            // let mobileHeaderHeight = mobileHeaderTitle.clientHeight;
+            // console.log(`Mobile header height: ${mobileHeaderHeight}`);
 
             let portraitTranslation = (headerInfoHeight.height) + verticalCenterOffset;
 
-            console.log(`Portrait translation: ${portraitTranslation}`);
+            // console.log(`Portrait translation: ${portraitTranslation}`);
             headerPortrait.style.transform = `translateY(${ portraitTranslation}px)`;
 
             updateMeasurements();
@@ -182,7 +182,7 @@ window.addEventListener('load', () => {})
             linkContainer = shadowContact.shadowRoot.querySelector('.header-contact');
         }
 
-        console.log(`Link container is available: ${linkContainer !== null}`)
+        // console.log(`Link container is available: ${linkContainer !== null}`)
         return linkContainer !== null;
     }
 }
@@ -577,7 +577,7 @@ function FormatTextDescription(text){
         }
 
         container.innerHTML = header[0];
-        console.log(`Found header ${header[0]}`);
+        // console.log(`Found header ${header[0]}`);
     }
 
     const listElement = document.createElement('ul');

@@ -317,8 +317,6 @@ p{
     border-color: transparent;
 }
 
-
-
 .section-header{
     font-size: var(--fs-500);
     padding-bottom: 1rem;
@@ -460,10 +458,9 @@ p{
 .main-container
 {
     margin: 0 auto;
-    padding-top: 25px;
+    padding-top: 0;
     padding-left: var(--main-container-horizontal-padding);
     padding-right: var(--main-container-horizontal-padding);
-    /*border-radius: 25px;*/
     min-width: var(--container-min-width);
     max-width: var(--container-max-width);
     background-color: var(--background-color);
@@ -483,7 +480,7 @@ p{
     align-items: stretch;
     background-color: var(--background-color);
     border-width: medium;
-    margin-bottom: 80px;
+    margin-bottom: 5rem;
     box-shadow: var(--box-shadow-default);
 
 }
@@ -516,9 +513,12 @@ align-self: flex-end;
     padding: 12px 25px;
 }
 
+/*TODO: fix wrapping here*/
 .description {
-    min-height: 38px;
-    flex-grow: 1;
+    /*min-height: 38px;*/
+    /*flex-grow: 1;*/
+    text-wrap: balance;
+    flex-shrink: 1;
 }
 
 .description-title
@@ -589,9 +589,8 @@ align-self: flex-end;
 .read-more{
     border-radius: var(--border-radius-element);
     position: relative;
-    text-align: justify;
-    padding: 1px 24px; /* <p> element has top/bot margin of 16px*/
-    margin: 12px 0;
+    padding: 0.125rem 12rem; /* <p> element has top/bot margin of 16px*/
+    margin: 0.75rem 0;
     box-shadow: var(--box-shadow-default);
 }
 
@@ -934,7 +933,7 @@ align-self: flex-end;
 @media (max-width: 400px)
 {
     :root{
-        font-size: 12px;
+        font-size: 13px;
     }
 
 }
