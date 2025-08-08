@@ -1,67 +1,198 @@
 
 let cachedCSS = null;
 
+window.addEventListener('load', () => {})
+{
+    // const mobileQuery = window.matchMedia('(max-width: 858px)');
+    const headerElement = document.querySelector('.header');
+    const headerPattern = headerElement.querySelector('.header-pattern');
+    const contactContainer = headerElement.querySelector('.contact-container');
+
+    const headerInfo = document.querySelector('.header-info');
+    const headerPortrait = document.querySelector('.header-portrait');
+    const headerPortraitImage = headerPortrait.querySelector('img');
+    const headerPortraitText = document.querySelector('.header-portrait-text');
+    const scalingHeader = document.querySelector('.scaling-text-svg');
+    const mobileHeaderTitle = document.querySelector('.mobile-header-title');
+
+    let shadowContact = null;
+    let linkContainer = null;
+
+    let headerPortraitDefaultMax = getComputedStyle(headerPortrait).maxHeight;
+    let headerPatternHeight = headerPattern.clientHeight;
+    let headerRect = headerElement.clientHeight;
+    let height = null;
+
+    let passedCollapsePoint = false;
+
+    updateMeasurements();
+    UpdateSvgScale();
+
+    window.addEventListener('scroll', () => {
+        updateMeasurements();
+
+        if((window.scrollY > height) && !passedCollapsePoint){
+            CollapseDesktopHeader(headerElement);
+        }
+
+        if((window.scrollY < height) && passedCollapsePoint){
+            ExpandDesktopHeader(headerElement);
+        }
+    })
+
+    /* Event to keep header in correct place when resizing */
+    window.addEventListener('resize', () => {
+        updateMeasurements();
+
+        if(passedCollapsePoint){
+            CollapseDesktopHeader(headerElement);
+        }
+
+        let sizeThreshold = window.matchMedia('(max-width: 500px)');
+        if(sizeThreshold.matches){
+            UpdateSvgScale();
+        }
+
+        //TODO: since header-portrait has rem width for height
+        // it's snapshot to whatever size the browser was when opening.
+        // find a way of updating the variable when max-height should increase/decrease.
+    })
+
+    /* Collapsed portrait click event */
+    headerPortrait.addEventListener('click', () => {
+        if(headerPortraitImage.classList.contains('header-image-collapsed')){
+            headerPortraitImage.classList.remove('no-transitions');
+            headerPortraitImage.classList.toggle('hidden-image');
+            TryGetShadowContact();
+        }
+    })
+
+    headerPortraitImage.addEventListener('transitionstart', () => {
+        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+        if(!isHidden){
+            headerPortraitText.classList.add('hidden-portrait-text');
+        }
+    })
+
+    headerPortraitImage.addEventListener('transitionend', () => {
+        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+        if(isHidden){
+            headerPortraitText.classList.remove('hidden-portrait-text');
+        }
+    });
+
+    function UpdateSvgScale() {
+        const bbox = scalingHeader.getBBox();
+
+        scalingHeader.setAttribute("viewBox", [bbox.x, bbox.y, bbox.width, bbox.height].join(" "));
+    }
+
+    function updateMeasurements(){
+        headerPatternHeight = headerPattern.clientHeight;
+        headerRect = document.querySelector('.header').clientHeight;
+        height = headerRect - headerPatternHeight;
+
+        // if(headerPortraitImage.classList.contains('header-image-collapsed')){
+        //     return;
+        // }
+    }
+
+    function CollapseDesktopHeader(headerElement){
+
+        if(TryGetShadowContact()){
+
+            headerPortrait.classList.remove('animate-grow');
+
+            headerPortraitImage.classList.remove('header-image-expanded');
+            headerPortraitImage.classList.add('header-image-collapsed');
+            headerPortraitImage.classList.add('hidden-image');
+
+            headerPortraitText.classList.remove('hidden-portrait-text');
+
+            headerPortrait.style.maxHeight = linkContainer.clientHeight + 'px';
+
+            /*Get height of header*/
+            let headerInfoHeight = headerInfo.getBoundingClientRect();
+            let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
+
+            console.log(`Header info height: ${headerInfoHeight.height}`);
+            console.log(`New max height: ${headerPortrait.style.maxHeight}`);
+            console.log(`Vertical center offset: ${verticalCenterOffset}`);
+            let mobileHeaderHeight = mobileHeaderTitle.clientHeight;
+            console.log(`Mobile header height: ${mobileHeaderHeight}`);
+
+            let portraitTranslation = (headerInfoHeight.height) + verticalCenterOffset;
+
+            console.log(`Portrait translation: ${portraitTranslation}`);
+            headerPortrait.style.transform = `translateY(${ portraitTranslation}px)`;
+
+            updateMeasurements();
+
+            headerElement.style.position = 'sticky';
+            headerElement.style.transform = `translateY(-${height}px)`;
+
+            let rightMargin = parseInt(getComputedStyle(linkContainer).marginRight ??= "0") ; /*Margin offset*/
+            const contactXMove = (contactContainer.clientWidth - linkContainer.clientWidth) - (rightMargin * 2);
+            // console.log(`Contact container width: ${contactXMove}`);
+            linkContainer.style.transform = `translateX(${contactXMove}px)`;
+        }
+
+        // console.log(`Header port max-height: ${headerPortraitDefaultMax}`);
+        passedCollapsePoint = true;
+    }
+
+    function ExpandDesktopHeader(headerElement) {
+
+        headerElement.style.position = 'relative';
+        headerElement.style.transform = 'translateY(0)';
+
+        if(TryGetShadowContact()){
+            linkContainer.style.transform = `translateX(0)`;
+        }
+
+        headerPortrait.classList.add('animate-grow');
+        headerPortrait.style.transform = 'translateY(0)';
+        headerPortrait.style.maxHeight = `${headerPortraitDefaultMax}`;
+
+        headerPortraitImage.classList.add('no-transitions');
+        headerPortraitImage.classList.add('header-image-expanded');
+        headerPortraitImage.classList.remove('header-image-collapsed');
+        headerPortraitImage.classList.remove('hidden-image');
+
+        headerPortraitText.classList.add('hidden-portrait-text');
+
+        passedCollapsePoint = false;
+    }
+
+    function TryGetShadowContact(){
+        if(linkContainer !== null){
+            // console.log('Shadow contact found');
+            return true;
+        }
+
+        if(shadowContact === null){
+            shadowContact = document.querySelector('header-contact-links');
+            // console.log('Getting shadow contact root.');
+        }
+
+        if(shadowContact.shadowRoot !== null) {
+            // console.log('Shadow contact shadowRoot found');
+            linkContainer = shadowContact.shadowRoot.querySelector('.header-contact');
+        }
+
+        console.log(`Link container is available: ${linkContainer !== null}`)
+        return linkContainer !== null;
+    }
+}
+
 /**
-* Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
-* @param {string} target-url - the URL to open.
+ * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
+ * @param {string} target-url - the URL to open.
  * @param {string} button-text - the string description.
  * @param {string[]} tag - the string tags to add to this module.
  * */
-
-
-
-
-const headerElements = document.querySelector('.header');
-const desktopHeader = headerElements.querySelector('.header-desktop');
-const rect = headerElements.getBoundingClientRect();
-const desktopPattern = headerElements.querySelector('.header-pattern');
-const patternRect = desktopPattern.getBoundingClientRect();
-const height = rect.height - patternRect.height;
-
-let passedCollapsePoint = false;
-
-window.addEventListener('scroll', () => {
-
-    // const maxHeight = document.documentElement.scrollHeight;
-    // const currentScrollPosition = maxHeight - window.innerHeight;
-
-    // console.log(`Document current scroll height is: ${currentScrollPosition}`);
-    console.log(`Header height is: ${height}`);
-    console.log(`Pattern rect height is: ${patternRect.height}`);
-    // console.log(`Scroll position is: ${window.scrollY}`);
-
-    if((window.scrollY > height )&& !passedCollapsePoint){
-        CollapseDesktopHeader(headerElements);
-        console.log('collapsed header');
-    }
-
-    if((window.scrollY < height) && passedCollapsePoint){
-        ExpandDesktopHeader(headerElements);
-        console.log('returned to top');
-    }
-
-})
-
-function CollapseDesktopHeader(headerElement, elementsToHide){
-    // headerElement.classList.add('header-collapsed');
-    headerElement.style.position = 'sticky';
-    headerElement.style.transform = `translateY(-${height}px)`;
-    passedCollapsePoint = true;
-    // window.scrollBy({top: -height +1});
-}
-
-function ExpandDesktopHeader(headerElement, elementsToHide){
-    const title = headerElement.querySelector('.header-title');
-    const patternTop = headerElement.querySelector('.header-pattern');
-    headerElement.style.position = 'relative';
-    headerElement.style.transform = 'translateY(0)';
-
-    passedCollapsePoint = false;
-
-    title.style.display = 'block';
-    patternTop.style.display = 'flex';
-}
-
 class ProjectPreviewTemplate extends HTMLElement
 {
     constructor(){
@@ -218,11 +349,13 @@ class HeaderContactLinks extends HTMLElement {
         `;
         this.shadowRoot.appendChild(svgDefs);
 
-
-
         // Create the elements
-        const container = document.createElement('div');
-        container.className = 'header-contact';
+        // const container = document.createElement('div');
+        // container.className = 'contact-container';
+
+        const linkContainer = document.createElement('div');
+        linkContainer.className = 'header-contact';
+        linkContainer.id = 'link-container';
 
         const links = [
             {
@@ -254,10 +387,9 @@ class HeaderContactLinks extends HTMLElement {
 
             svg.appendChild(use);
             a.appendChild(svg);
-            container.appendChild(a);
+            linkContainer.appendChild(a);
         });
-
-        this.shadowRoot.appendChild(container);
+        this.shadowRoot.appendChild(linkContainer);
     }
 
 }
@@ -301,13 +433,12 @@ function AnimateContainerExpansion(resizedContainer){
  * @param {*[]} options.highlightBorders - the HTML elements to add highlighted borders to when Read More is active.
  * @param {string} options.linkButtonText - the string to display on the external link button. 'Project repository' default.
  * */
-
 function CreateReadMoreElement({textContent, targetURL, ...options } = {})
 {
     const defaults = {
         highlights: [],
         highlightBorders: [],
-        linkButtonText: 'Project repository'
+        linkButtonText: 'Repository'
     }
 
     const sanitizedOptions =
@@ -354,9 +485,7 @@ function CreateReadMoreElement({textContent, targetURL, ...options } = {})
         })
         .catch(error => console.log('Error loading Repository Icon SVG', error));
 
-
-    const readMoreText = document.createElement('p');
-    readMoreText.innerHTML = textContent;
+    const readMoreText = FormatTextDescription(textContent);
 
     /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
 
@@ -386,7 +515,6 @@ function CreateReadMoreElement({textContent, targetURL, ...options } = {})
         }
     });
 
-    // buttonUrlIcon.appendChild(buttonURLImg);
     buttonURL.appendChild(buttonUrlIcon);
     buttonURL.appendChild(buttonURLText);
 
@@ -420,6 +548,81 @@ function CreateTag(content){
     tag.className = 'tag';
     tag.textContent = content;
     return tag;
+}
+
+function FormatTextDescription(text){
+    const container = document.createElement('div');
+
+    const lines = text.split('\n').map(line => line.trim());
+    const paragraphs = [];
+    const listItems = [];
+
+    lines.forEach(line => {
+        if (/^- /.test(line)) {
+            listItems.push(line);
+        } else {
+            paragraphs.push(line);
+        }
+    });
+
+    const header = paragraphs.filter( line  => /^<h3>.*<\/h3>$/.test(line.trim()));
+
+    /*add HEADER to container */
+    if((header.length > 0)){
+
+        /*Remove header from paragraphs*/
+        const index = paragraphs.indexOf(header[0]);
+        if (index !== -1) {
+            paragraphs.splice(index, 1);
+        }
+
+        container.innerHTML = header[0];
+        console.log(`Found header ${header[0]}`);
+    }
+
+    const listElement = document.createElement('ul');
+
+    listItems.forEach(line => {
+        const li = document.createElement('li');
+        li.textContent = line.replace('- ', '');
+        listElement.appendChild(li);
+    })
+
+    /* Add list to container*/
+    if(listElement.children.length > 0){
+        container.appendChild(listElement);
+    }
+
+
+    /* Add paragraph text to container.*/
+    //TODO: fix janky mess
+    if(paragraphs.length > 0){
+
+        const formattedParagraphs = paragraphs.map(str => {
+            return str.replace(/\.(?!\s)/g, '. ');
+        })
+
+        const paragraphElement = document.createElement('p');
+
+        //TODO: fix this janky mess.
+        let lineBreakInterval = 0;
+        formattedParagraphs.forEach(line => {
+            paragraphElement.appendChild(document.createTextNode(line));
+
+            if(lineBreakInterval % 2 === 0 && lineBreakInterval !== 0 && formattedParagraphs.length > lineBreakInterval +1){
+                paragraphElement.appendChild(document.createElement('br'));
+                paragraphElement.appendChild(document.createElement('br'));
+            }
+
+            lineBreakInterval++;
+        })
+
+
+
+        container.appendChild(paragraphElement);
+    }
+
+    return container;
 }
 
 function CreateTagsFromAttribute(attribute){

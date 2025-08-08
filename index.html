@@ -7,31 +7,47 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 </head>
 
 <body>
-
-
 <header class="header">
+<!--    <div class ="header-mobile">-->
+<!--            <div class ="title-element-mobile">-->
+<!--                <p class="mobile-header-title">simon palmblad</p>-->
+<!--        </div>-->
+<!--    </div>-->
 
-    <div class ="header-mobile">
-        <div class="header-contact">
+<!--    <div class="header-desktop">-->
+<!--        <div class="header-pattern"></div>-->
+<!--        <p class="header-title">Simon Palmblad</p>-->
+<!--    </div>-->
+    <div class="mobile-header-title">
+        <svg class ="scaling-text-svg">
+            <text x="0" y="0">Simon Palmblad</text>
+        </svg>
 
-            <div class ="title-element-mobile">
-                <p class="mobile-header-title">simon palmblad</p>
+    </div>
+    <div class="header-info">
+        <div class ="header-portrait">
+            <img class="no-transitions" src="images/portrait.png" alt="portrait">
+           <img src="images/SVGs/glyphs.svg" class="hidden-portrait-text header-portrait-text" alt ="PRESS">
+<!--            <p >Press</p>-->
+        </div>
+
+        <div class ="header-text">
+            <div class="header-title-container">
+                <p class="header-title">Simon Palmblad</p>
+<!--                <div class="header-element-divider striped-background"></div>-->
             </div>
+            <p class="header-description">Fullstack developer with a background in games and audio. Passionate about great user experiences and meticulously tweaking the details.</p>
+        </div>
+
+    </div>
+
+    <div class="header-pattern">
+        <div class="contact-container">
             <header-contact-links></header-contact-links>
         </div>
-    </div>
-
-    <div class="header-desktop">
-        <div class="header-pattern"></div>
-        <p class="header-title">Simon Palmblad</p>
-    </div>
-
-    <div class="header-contact header-pattern">
-        <header-contact-links></header-contact-links>
     </div>
 </header>
 
@@ -50,10 +66,10 @@
 <!--            target-url="https://www.sonigon.com/sonity/"-->
 <!--            link-button-text="To website"-->
 <!--            tags="C#, Unity, Plugin integration"-->
-<!--            description="Independent development of a C# system that integrated two third party Unity plugins enabling seamlessly integration of one plugin within the other plugin's ecosystem."-->
+<!--            description="Independent development of a C# system that integrated two third party Unity plugins enabling seamless integration of one plugin within the other plugin's ecosystem."-->
 <!--            long-description="I was contracted to integrate Sonity - an audio middleware plugin - in PlayMaker's visual scripting interface.-->
 <!--    ◽ Custom UI elements.-->
-<!--    ◽ Additions to the official documentation.-->
+<!--    ◽ Additions to the official documentation."-->
 <!--"-->
 <!--    >-->
 
@@ -74,13 +90,16 @@
         target-url="https://github.com/SimonPalmblad/InspectorLockButton"
         tags="C#, Unity, editor-tool"
         description="A custom Unity Editor tool. Adds a lock button to GameObject variable(s) to enable/disable editing via the interface."
-        long-description="<h3>Features</h3>    ◽ Lock the UI of any variable in the Unity Inspector.
-    ◽ Integration with Unity's official UI Toolkit system.
-    ◽ Context menu for quickly creating new lockable assets.
-    ◽ Settings and styling options for lockable assets.
+        long-description="<h3>Features</h3>
+    - Lock the UI of any variable in the Unity Inspector.
+    - Integration with Unity's official UI Toolkit system.
+    - Context menu for quickly creating new lockable assets.
+    - Settings and styling options for lockable assets.
 
-This tool provides fine-control over variables within the Unity Editor. A locked asset cannot be edited in the Inspector UI, preventing accidental changes or indicating that it should not be changed/edited. The plugin does not require any knowledge of the Unity UI Toolkit for most uses. UI Toolkit customization is only required if you want to customize which variables can be locked or organize lockable variables into different lock groups within an asset.
-        ">
+    This tool provides fine-control over variables within the Unity Editor.
+    A locked asset cannot be edited in the Inspector UI, preventing accidental changes or indicating that it should not be changed/edited.
+    The plugin does not require any knowledge of the Unity UI Toolkit for most uses.
+    UI Toolkit customization is only required if you want to customize which variables can be locked or organize lockable variables into different lock groups within an asset.">
     </project-preview-template>
 
     <project-preview-template
@@ -88,26 +107,32 @@ This tool provides fine-control over variables within the Unity Editor. A locked
         target-url="https://github.com/SimonPalmblad/StringFlexBox"
         tags="C#, string-formatting"
         description="A code library for creating dynamic textboxes around strings to be used in the console."
-long-description="<h3>Features</h3>    ◽ An easy-to-use code library for creating flexible textboxes.
-    ◽ Automatic word-wrapping functionality.
-    ◽ Customizable via size, padding and border style.
-    ◽ Nested textboxes in row or column format.
-    ◽ Can be resized after creation.
+long-description="<h3>Features</h3>
+    - An easy-to-use code library for creating flexible textboxes.
+    - Automatic word-wrapping functionality.
+    - Customizable via size, padding and border style.
+    - Nested textboxes in row or column format.
+    - Can be resized after creation.
 
-The library takes inspiration from the CSS FlexBox layout model. I created this library for a text-based, console-only project I'm working on. I wanted a way of organizing and neatly displaying text and ran in to issues using the normal methods when I wanted to arrange two textboxes next to each other.
-"></project-preview-template>
+    The library takes inspiration from the CSS FlexBox layout model.
+    I created this library for a text-based, console-only project I'm working on.
+    I wanted a way of organizing and neatly displaying text and ran in to issues using the normal methods when I wanted to arrange two textboxes next to each other."></project-preview-template>
 
     <project-preview-template
-    title="Unity 2D Sprite Shape Animator"
+    title="Unity Animation Tool"
     target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
     tags=" C#, Unity, editor-tool, extension"
     description="An extension to Unity's 2D Sprite Shape (2D vector graphic objects). Adds functionality for animating Sprite Shapes via the Editor Timeline tool."
-    long-description="<h3>Features</h3>    ◽ Custom UI for the Unity Editor.
-    ◽ Context sensitive toolbar button.
-    ◽ Context-menu default asset creation.
+    long-description="<h3>Features</h3>
+    - Custom UI for the Unity Editor.
+    - Context sensitive toolbar button.
+    - Context-menu default asset creation.
 
-In the default implementation of Unity's 2D Sprite Shapes it's impossible to animate a point moving using the Animation timeline. I wanted a way of easily creating animations without explicitly coding each point movement manually. Therefore I created my own tool for it that allows for a much simpler and user-friendly approach to creating animations using Sprite Shapes."
-    ></project-preview-template>
+    In the default implementation of Unity's 2D Sprite Shapes it's impossible to animate a point moving using the Animation timeline.
+    I wanted a way of easily creating animations without explicitly coding each point movement manually.
+    Therefore I created my own tool for it that allows for a much simpler and user-friendly approach to creating animations using Sprite Shapes.">
+
+    </project-preview-template>
 </div>
 
 <!--MAIL ICON -->
