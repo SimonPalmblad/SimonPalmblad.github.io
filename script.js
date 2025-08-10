@@ -1,32 +1,38 @@
 
 let cachedCSS = null;
 
+/*______ Document queries ______*/
+const headerElement = document.querySelector('.header');
+const headerPattern = headerElement.querySelector('.header-pattern');
+const contactContainer = headerElement.querySelector('.contact-container');
+
+const headerInfo = document.querySelector('.header-info');
+const headerTitle = document.querySelector('.header-title');
+const headerPortrait = document.querySelector('.header-portrait');
+const headerPortraitImage = headerPortrait.querySelector('img');
+const headerPortraitText = document.querySelector('.header-portrait-text');
+const scalingHeader = document.querySelector('.scaling-text-svg');
+const headerTitleMobile = document.querySelector('.header-title-mobile');
+
+
+let headerPatternHeight = headerPattern.clientHeight;
+let headerRect = headerElement.clientHeight;
+
+/*______ Non-initialized ______*/
+let shadowContact = null;
+let linkContainer = null;
+let height = null;
+
+
 window.addEventListener('load', () => {})
 {
-    // const mobileQuery = window.matchMedia('(max-width: 858px)');
-    const headerElement = document.querySelector('.header');
-    const headerPattern = headerElement.querySelector('.header-pattern');
-    const contactContainer = headerElement.querySelector('.contact-container');
-
-    const headerInfo = document.querySelector('.header-info');
-    const headerPortrait = document.querySelector('.header-portrait');
-    const headerPortraitImage = headerPortrait.querySelector('img');
-    const headerPortraitText = document.querySelector('.header-portrait-text');
-    const scalingHeader = document.querySelector('.scaling-text-svg');
-    const mobileHeaderTitle = document.querySelector('.mobile-header-title');
-
-    let shadowContact = null;
-    let linkContainer = null;
-
-    let headerPortraitDefaultMax = getComputedStyle(headerPortrait).maxHeight;
-    let headerPatternHeight = headerPattern.clientHeight;
-    let headerRect = headerElement.clientHeight;
-    let height = null;
-
+    const contactAnimationInterval = 60;
     let passedCollapsePoint = false;
 
     updateMeasurements();
+    UpdateHeaderTitlePosition();
     UpdateSvgScale();
+    PortraitLoadAnimation();
 
     window.addEventListener('scroll', () => {
         updateMeasurements();
@@ -48,14 +54,7 @@ window.addEventListener('load', () => {})
             CollapseDesktopHeader(headerElement);
         }
 
-        let sizeThreshold = window.matchMedia('(max-width: 500px)');
-        if(sizeThreshold.matches){
-            UpdateSvgScale();
-        }
-
-        //TODO: since header-portrait has rem width for height
-        // it's snapshot to whatever size the browser was when opening.
-        // find a way of updating the variable when max-height should increase/decrease.
+        UpdateHeaderTitlePosition();
     })
 
     /* Collapsed portrait click event */
@@ -82,6 +81,35 @@ window.addEventListener('load', () => {})
             headerPortraitText.classList.remove('hidden-portrait-text');
         }
     });
+
+    function UpdateHeaderTitlePosition(){
+        let sizeThreshold = window.matchMedia('(max-width: 600px)');
+        if (sizeThreshold.matches) {
+            headerTitleMobile.style.display = 'flex';
+            headerTitle.style.display = 'none';
+            UpdateSvgScale();
+        } else {
+            headerTitle.style.display = 'flex';
+        }
+
+    }
+
+    function PortraitLoadAnimation(){
+        headerPortrait.style.maxHeight = '32px';
+
+        setTimeout(function(){
+            headerPortrait.classList.add('animate-grow');
+            headerPortrait.style.transform = 'translateY(0)';
+            headerPortrait.style.maxHeight = GetPortraitImageHeight();
+
+            headerPortraitImage.classList.add('no-transitions');
+            headerPortraitImage.classList.add('header-image-expanded');
+            headerPortraitImage.classList.remove('header-image-collapsed');
+            headerPortraitImage.classList.remove('hidden-image');
+            headerPortraitText.classList.add('hidden-portrait-text');
+
+        }, 20);
+    }
 
     function UpdateSvgScale() {
         const bbox = scalingHeader.getBBox();
@@ -117,12 +145,6 @@ window.addEventListener('load', () => {})
             let headerInfoHeight = headerInfo.getBoundingClientRect();
             let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
 
-            // console.log(`Header info height: ${headerInfoHeight.height}`);
-            // console.log(`New max height: ${headerPortrait.style.maxHeight}`);
-            // console.log(`Vertical center offset: ${verticalCenterOffset}`);
-            // let mobileHeaderHeight = mobileHeaderTitle.clientHeight;
-            // console.log(`Mobile header height: ${mobileHeaderHeight}`);
-
             let portraitTranslation = (headerInfoHeight.height) + verticalCenterOffset;
 
             // console.log(`Portrait translation: ${portraitTranslation}`);
@@ -136,7 +158,8 @@ window.addEventListener('load', () => {})
             let rightMargin = parseInt(getComputedStyle(linkContainer).marginRight ??= "0") ; /*Margin offset*/
             const contactXMove = (contactContainer.clientWidth - linkContainer.clientWidth) - (rightMargin * 2);
             // console.log(`Contact container width: ${contactXMove}`);
-            linkContainer.style.transform = `translateX(${contactXMove}px)`;
+            AnimateContactSymbols(linkContainer, {startPosition: 0, endPosition: contactXMove, interval: contactAnimationInterval});
+
         }
 
         // console.log(`Header port max-height: ${headerPortraitDefaultMax}`);
@@ -149,12 +172,17 @@ window.addEventListener('load', () => {})
         headerElement.style.transform = 'translateY(0)';
 
         if(TryGetShadowContact()){
-            linkContainer.style.transform = `translateX(0)`;
+            const containerPosition = linkContainer.querySelector('.contact-element');
+
+            AnimateContactSymbols(linkContainer,
+                {startPosition: parseFloat(getComputedStyle(containerPosition).transform),
+                endPosition: 0,
+                interval: contactAnimationInterval});
         }
 
         headerPortrait.classList.add('animate-grow');
         headerPortrait.style.transform = 'translateY(0)';
-        headerPortrait.style.maxHeight = `${headerPortraitDefaultMax}`;
+        headerPortrait.style.maxHeight = GetPortraitImageHeight();
 
         headerPortraitImage.classList.add('no-transitions');
         headerPortraitImage.classList.add('header-image-expanded');
@@ -165,6 +193,11 @@ window.addEventListener('load', () => {})
 
         passedCollapsePoint = false;
     }
+
+    function GetPortraitImageHeight() {
+        return getComputedStyle(headerPortrait).getPropertyValue('--header-image-size').trim();
+    }
+
 
     function TryGetShadowContact(){
         if(linkContainer !== null){
@@ -295,11 +328,13 @@ class ProjectPreviewTemplate extends HTMLElement
         this.shadowRoot.appendChild(mainElement);
     }
 }
-
 customElements.define('project-preview-template', ProjectPreviewTemplate);
 
+
 class HeaderContactLinks extends HTMLElement {
+
     constructor() {
+
         super();
         this.attachShadow({mode: 'open'});
     }
@@ -347,11 +382,8 @@ class HeaderContactLinks extends HTMLElement {
             </defs>
         </svg>
         `;
-        this.shadowRoot.appendChild(svgDefs);
 
-        // Create the elements
-        // const container = document.createElement('div');
-        // container.className = 'contact-container';
+        this.shadowRoot.appendChild(svgDefs);
 
         const linkContainer = document.createElement('div');
         linkContainer.className = 'header-contact';
@@ -390,11 +422,51 @@ class HeaderContactLinks extends HTMLElement {
             linkContainer.appendChild(a);
         });
         this.shadowRoot.appendChild(linkContainer);
-    }
 
+        /*Set initial animation*/
+        AnimateContactSymbols(linkContainer,
+            {
+            startPosition: headerTitleMobile.getBoundingClientRect().width,
+            endPosition: 0,
+            interval: 175});
+    }
 }
 
 customElements.define('header-contact-links', HeaderContactLinks);
+
+/**
+ * Summary: Horizontal animate for the symbols inside the contact HTML element.
+ * @param {float} options.startPosition - position to start from.
+ * @param {float} options.endPosition - position to end at.
+ * @param {float} options.initialDelay - MS to wait before animation sequence starts.
+ * @param {float} options.interval - MS delay between each animation.
+ * */
+function AnimateContactSymbols(animationTarget, {...options}) {
+    let symbols = animationTarget.querySelectorAll('.contact-element');
+    const defaults ={
+        startPosition: 0,
+        endPosition: 0,
+        initialDelay: 0,
+        interval: 250,
+    }
+
+    const settings = {...defaults, ...options};
+    const direction = settings.endPosition > settings.startPosition ? "right" : "left";
+    let waitTime = settings.initialDelay;
+
+     if(direction === "right"){
+         symbols = [...symbols].reverse();
+    }
+
+    symbols.forEach(symbol => {
+        waitTime += settings.interval;
+        symbol.style.transform = `translateX(${settings.startPosition}px)`;
+        setTimeout(function() {
+            symbol.style.transition = 'transform 0.4s ease-out';
+            symbol.style.transform = `translateX(${settings.endPosition}px)`;
+        }, waitTime);
+    })
+}
 
 function AnimateContainerExpansion(resizedContainer){
 
@@ -624,7 +696,6 @@ function FormatTextDescription(text){
 
     return container;
 }
-
 function CreateTagsFromAttribute(attribute){
     if(!attribute){
         return null;
