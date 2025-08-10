@@ -5,7 +5,6 @@ let cachedCSS = null;
 const headerElement = document.querySelector('.header');
 const headerPattern = headerElement.querySelector('.header-pattern');
 const contactContainer = headerElement.querySelector('.contact-container');
-
 const headerInfo = document.querySelector('.header-info');
 const headerTitle = document.querySelector('.header-title');
 const headerPortrait = document.querySelector('.header-portrait');
@@ -14,6 +13,7 @@ const headerPortraitText = document.querySelector('.header-portrait-text');
 const scalingHeader = document.querySelector('.scaling-text-svg');
 const headerTitleMobile = document.querySelector('.header-title-mobile');
 
+const descriptionContainers = await document.querySelectorAll('.project-description-container');
 
 let headerPatternHeight = headerPattern.clientHeight;
 let headerRect = headerElement.clientHeight;
@@ -55,6 +55,15 @@ window.addEventListener('load', () => {})
         }
 
         UpdateHeaderTitlePosition();
+
+        descriptionContainers.forEach(container => {
+            if(container.classList.contains('visible')){
+                console.log('Resizing container to size: ' + container.scrollHeight);
+                container.style.height = container.scrollHeight + 'px';
+            }
+        })
+
+
     })
 
     /* Collapsed portrait click event */
@@ -365,18 +374,11 @@ function AnimateContainerExpansion(resizedContainer){
 
     // EXPAND
     if (isVisible) {
-        resizedContainer.style.height = '0px';
-        resizedContainer.style.offsetHeight;
-
         resizedContainer.style.height = resizedContainer.scrollHeight + 'px';
 
-        // COLLAPSE
+    // COLLAPSE
     } else {
         resizedContainer.style.transition = 'height 0.15s ease-in-out';
-        resizedContainer.style.height = resizedContainer.scrollHeight + 'px';
-
-        resizedContainer.style.offsetHeight;
-
         resizedContainer.style.height = '0px';
     }
 
@@ -414,7 +416,7 @@ class ProjectDescriptionContainer extends HTMLElement
 
         // -------- MAIN ELEMENT ---------- //
         const mainElement = document.createElement('div');
-        mainElement.className = 'element';
+        mainElement.className = 'project-description-container';
 
         // ------- ELEMENT HOLDING DESC & LINK BUTTONS -------- //
         const descriptionElement = document.createElement('div');
@@ -495,6 +497,8 @@ class ProjectDescriptionContainer extends HTMLElement
         this.shadowRoot.appendChild(mainElement);
     }
 }
+
+
 customElements.define('project-description-container', ProjectDescriptionContainer);
 
 /**

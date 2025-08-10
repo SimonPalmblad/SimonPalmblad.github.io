@@ -471,8 +471,7 @@ ul{
     align-content: center;
 }
 
-/* TODO: Rename */
-.element
+.project-description-container
 {
     position: relative;
     display: flex;
@@ -865,7 +864,7 @@ align-self: flex-end;
         padding-right: 1rem;
     }
 
-    :host .element{
+    :host .project-description-container{
         max-width: 100%;
         flex-grow: 1;
         display:flex;
