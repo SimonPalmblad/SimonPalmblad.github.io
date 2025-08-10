@@ -13,7 +13,7 @@ const headerPortraitText = document.querySelector('.header-portrait-text');
 const scalingHeader = document.querySelector('.scaling-text-svg');
 const headerTitleMobile = document.querySelector('.header-title-mobile');
 
-const descriptionContainers = await document.querySelectorAll('.project-description-container');
+// const descriptionContainers = await document.querySelectorAll('.project-description-container');
 
 let headerPatternHeight = headerPattern.clientHeight;
 let headerRect = headerElement.clientHeight;
@@ -55,13 +55,13 @@ window.addEventListener('load', () => {})
         }
 
         UpdateHeaderTitlePosition();
-
-        descriptionContainers.forEach(container => {
-            if(container.classList.contains('visible')){
-                console.log('Resizing container to size: ' + container.scrollHeight);
-                container.style.height = container.scrollHeight + 'px';
-            }
-        })
+        // TODO: implement resizable read-more boxes.
+        // descriptionContainers.forEach(container => {
+        //     if(container.classList.contains('visible')){
+        //         console.log('Resizing container to size: ' + container.scrollHeight);
+        //         container.style.height = container.scrollHeight + 'px';
+        //     }
+        // })
 
 
     })
