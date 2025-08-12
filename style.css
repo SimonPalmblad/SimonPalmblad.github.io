@@ -589,6 +589,8 @@ align-self: flex-end;
     margin: 0.75rem 0;
     box-shadow: var(--box-shadow-default);
     flex-shrink: 1;
+    transition: height 0.4s ease-in-out;
+
 }
 
 /* BUTTON ELEMENTS */
@@ -707,11 +709,8 @@ align-self: flex-end;
 }
 /* ______MISC ELEMENTS______ */
 .hidden-element{
-    /*!*display: none;*!*/
-    /*opacity: 0;*/
     height: 0;
     overflow: hidden;
-    transition: height 0.4s ease-in-out;
 }
 
 .selection-sidebar{

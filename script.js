@@ -13,22 +13,19 @@ const headerPortraitText = document.querySelector('.header-portrait-text');
 const scalingHeader = document.querySelector('.scaling-text-svg');
 const headerTitleMobile = document.querySelector('.header-title-mobile');
 
-// const descriptionContainers = await document.querySelectorAll('.project-description-container');
-
 let headerPatternHeight = headerPattern.clientHeight;
 let headerRect = headerElement.clientHeight;
 
 /*______ Non-initialized ______*/
+let descriptionContainers = []
 let shadowContact = null;
 let linkContainer = null;
 let height = null;
-
 
 window.addEventListener('load', () => {})
 {
     const contactAnimationInterval = 60;
     let passedCollapsePoint = false;
-
     updateMeasurements();
     UpdateHeaderTitlePosition();
     UpdateSvgScale();
@@ -38,11 +35,11 @@ window.addEventListener('load', () => {})
         updateMeasurements();
 
         if((window.scrollY > height) && !passedCollapsePoint){
-            CollapseDesktopHeader(headerElement);
+            CollapseHeader(headerElement);
         }
 
         if((window.scrollY < height) && passedCollapsePoint){
-            ExpandDesktopHeader(headerElement);
+            ExpandHeader(headerElement);
         }
     })
 
@@ -50,61 +47,139 @@ window.addEventListener('load', () => {})
     window.addEventListener('resize', () => {
         updateMeasurements();
 
-        if(passedCollapsePoint){
-            CollapseDesktopHeader(headerElement);
+        if (passedCollapsePoint) {
+            CollapseHeader(headerElement);
         }
 
         UpdateHeaderTitlePosition();
-        // TODO: implement resizable read-more boxes.
-        // descriptionContainers.forEach(container => {
-        //     if(container.classList.contains('visible')){
-        //         console.log('Resizing container to size: ' + container.scrollHeight);
-        //         container.style.height = container.scrollHeight + 'px';
-        //     }
-        // })
+
     })
 
-    /* Collapsed portrait click event */
-    headerPortrait.addEventListener('click', () => {
-        if(headerPortraitImage.classList.contains('header-image-collapsed')){
-            headerPortraitImage.classList.remove('no-transitions');
-            headerPortraitImage.classList.toggle('hidden-image');
-            TryGetShadowContact();
+        /* Collapsed portrait click event */
+        headerPortrait.addEventListener('click', () => {
+            if (headerPortraitImage.classList.contains('header-image-collapsed')) {
+                headerPortraitImage.classList.remove('no-transitions');
+                headerPortraitImage.classList.toggle('hidden-image');
+                TryGetShadowContact();
+            }
+        })
+
+        headerPortraitImage.addEventListener('transitionstart', () => {
+            const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+            if (!isHidden) {
+                headerPortraitText.classList.add('hidden-portrait-text');
+            }
+        })
+
+        headerPortraitImage.addEventListener('transitionend', () => {
+            const isHidden = headerPortraitImage.classList.contains('hidden-image');
+
+            if (isHidden) {
+                headerPortraitText.classList.remove('hidden-portrait-text');
+            }
+        })
+
+        function UpdateHeaderTitlePosition() {
+            let sizeThreshold = window.matchMedia('(max-width: 600px)');
+            if (sizeThreshold.matches) {
+                headerTitleMobile.style.display = 'flex';
+                headerTitle.style.display = 'none';
+                UpdateSvgScale();
+            } else {
+                headerTitle.style.display = 'flex';
+            }
         }
-    })
 
-    headerPortraitImage.addEventListener('transitionstart', () => {
-        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+        function PortraitLoadAnimation() {
+            headerPortrait.style.maxHeight = '32px';
 
-        if(!isHidden){
-            headerPortraitText.classList.add('hidden-portrait-text');
-        }
-    })
+            setTimeout(function () {
+                headerPortrait.classList.add('animate-grow');
+                headerPortrait.style.transform = 'translateY(0)';
+                headerPortrait.style.maxHeight = GetPortraitImageHeight();
 
-    headerPortraitImage.addEventListener('transitionend', () => {
-        const isHidden = headerPortraitImage.classList.contains('hidden-image');
+                headerPortraitImage.classList.add('no-transitions');
+                headerPortraitImage.classList.add('header-image-expanded');
+                headerPortraitImage.classList.remove('header-image-collapsed');
+                headerPortraitImage.classList.remove('hidden-image');
+                headerPortraitText.classList.add('hidden-portrait-text');
 
-        if(isHidden){
-            headerPortraitText.classList.remove('hidden-portrait-text');
-        }
-    });
-
-    function UpdateHeaderTitlePosition(){
-        let sizeThreshold = window.matchMedia('(max-width: 600px)');
-        if (sizeThreshold.matches) {
-            headerTitleMobile.style.display = 'flex';
-            headerTitle.style.display = 'none';
-            UpdateSvgScale();
-        } else {
-            headerTitle.style.display = 'flex';
+            }, 20);
         }
 
-    }
+        function UpdateSvgScale() {
+            const bbox = scalingHeader.getBBox();
 
-    function PortraitLoadAnimation(){
-        headerPortrait.style.maxHeight = '32px';
+            scalingHeader.setAttribute("viewBox", [bbox.x, bbox.y, bbox.width, bbox.height].join(" "));
+        }
 
-        setTimeout(function(){
+        function updateMeasurements() {
+            headerPatternHeight = headerPattern.clientHeight;
+            headerRect = document.querySelector('.header').clientHeight;
+            height = headerRect - headerPatternHeight;
+
+        }
+
+        function CollapseHeader(headerElement) {
+
+            if (TryGetShadowContact()) {
+
+                headerPortrait.classList.remove('animate-grow');
+
+                headerPortraitImage.classList.remove('header-image-expanded');
+                headerPortraitImage.classList.add('header-image-collapsed');
+                headerPortraitImage.classList.add('hidden-image');
+
+                headerPortraitText.classList.remove('hidden-portrait-text');
+
+                headerPortrait.style.maxHeight = linkContainer.clientHeight + 'px';
+
+                /*Get height of header*/
+                let headerInfoHeight = headerInfo.getBoundingClientRect();
+                let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
+
+                let portraitTranslation = (headerInfoHeight.height) + verticalCenterOffset;
+
+                // console.log(`Portrait translation: ${portraitTranslation}`);
+                headerPortrait.style.transform = `translateY(${portraitTranslation}px)`;
+
+                updateMeasurements();
+
+                headerElement.style.position = 'sticky';
+                headerElement.style.transform = `translateY(-${height}px)`;
+
+                let rightMargin = parseInt(getComputedStyle(linkContainer).marginRight ??= "0"); /*Margin offset*/
+                const contactXMove = (contactContainer.clientWidth - linkContainer.clientWidth) - (rightMargin * 2);
+                // console.log(`Contact container width: ${contactXMove}`);
+                AnimateContactSymbols(linkContainer, {
+                    startPosition: 0,
+                    endPosition: contactXMove,
+                    interval: contactAnimationInterval
+                });
+
+            }
+
+            // console.log(`Header port max-height: ${headerPortraitDefaultMax}`);
+            passedCollapsePoint = true;
+        }
+
+        function ExpandHeader(headerElement) {
+
+            headerElement.style.position = 'relative';
+            headerElement.style.transform = 'translateY(0)';
+
+            if (TryGetShadowContact()) {
+                const containerPosition = linkContainer.querySelector('.contact-element');
+
+                AnimateContactSymbols(linkContainer,
+                    {
+                        startPosition: parseFloat(getComputedStyle(containerPosition).transform),
+                        endPosition: 0,
+                        interval: contactAnimationInterval
+                    });
+            }
+
             headerPortrait.classList.add('animate-grow');
             headerPortrait.style.transform = 'translateY(0)';
             headerPortrait.style.maxHeight = GetPortraitImageHeight();
@@ -113,125 +188,41 @@ window.addEventListener('load', () => {})
             headerPortraitImage.classList.add('header-image-expanded');
             headerPortraitImage.classList.remove('header-image-collapsed');
             headerPortraitImage.classList.remove('hidden-image');
+
             headerPortraitText.classList.add('hidden-portrait-text');
 
-        }, 20);
-    }
-
-    function UpdateSvgScale() {
-        const bbox = scalingHeader.getBBox();
-
-        scalingHeader.setAttribute("viewBox", [bbox.x, bbox.y, bbox.width, bbox.height].join(" "));
-    }
-
-    function updateMeasurements(){
-        headerPatternHeight = headerPattern.clientHeight;
-        headerRect = document.querySelector('.header').clientHeight;
-        height = headerRect - headerPatternHeight;
-
-        // if(headerPortraitImage.classList.contains('header-image-collapsed')){
-        //     return;
-        // }
-    }
-
-    function CollapseDesktopHeader(headerElement){
-
-        if(TryGetShadowContact()){
-
-            headerPortrait.classList.remove('animate-grow');
-
-            headerPortraitImage.classList.remove('header-image-expanded');
-            headerPortraitImage.classList.add('header-image-collapsed');
-            headerPortraitImage.classList.add('hidden-image');
-
-            headerPortraitText.classList.remove('hidden-portrait-text');
-
-            headerPortrait.style.maxHeight = linkContainer.clientHeight + 'px';
-
-            /*Get height of header*/
-            let headerInfoHeight = headerInfo.getBoundingClientRect();
-            let verticalCenterOffset = (headerPatternHeight - headerPortrait.clientHeight) / 2;
-
-            let portraitTranslation = (headerInfoHeight.height) + verticalCenterOffset;
-
-            // console.log(`Portrait translation: ${portraitTranslation}`);
-            headerPortrait.style.transform = `translateY(${ portraitTranslation}px)`;
-
-            updateMeasurements();
-
-            headerElement.style.position = 'sticky';
-            headerElement.style.transform = `translateY(-${height}px)`;
-
-            let rightMargin = parseInt(getComputedStyle(linkContainer).marginRight ??= "0") ; /*Margin offset*/
-            const contactXMove = (contactContainer.clientWidth - linkContainer.clientWidth) - (rightMargin * 2);
-            // console.log(`Contact container width: ${contactXMove}`);
-            AnimateContactSymbols(linkContainer, {startPosition: 0, endPosition: contactXMove, interval: contactAnimationInterval});
-
+            passedCollapsePoint = false;
         }
 
-        // console.log(`Header port max-height: ${headerPortraitDefaultMax}`);
-        passedCollapsePoint = true;
-    }
-
-    function ExpandDesktopHeader(headerElement) {
-
-        headerElement.style.position = 'relative';
-        headerElement.style.transform = 'translateY(0)';
-
-        if(TryGetShadowContact()){
-            const containerPosition = linkContainer.querySelector('.contact-element');
-
-            AnimateContactSymbols(linkContainer,
-                {startPosition: parseFloat(getComputedStyle(containerPosition).transform),
-                endPosition: 0,
-                interval: contactAnimationInterval});
+        function GetPortraitImageHeight() {
+            return getComputedStyle(headerPortrait).getPropertyValue('--header-image-size').trim();
         }
 
-        headerPortrait.classList.add('animate-grow');
-        headerPortrait.style.transform = 'translateY(0)';
-        headerPortrait.style.maxHeight = GetPortraitImageHeight();
+        function TryGetShadowContact() {
+            if (linkContainer !== null) {
+                // console.log('Shadow contact found');
+                return true;
+            }
 
-        headerPortraitImage.classList.add('no-transitions');
-        headerPortraitImage.classList.add('header-image-expanded');
-        headerPortraitImage.classList.remove('header-image-collapsed');
-        headerPortraitImage.classList.remove('hidden-image');
+            if (shadowContact === null) {
+                shadowContact = document.querySelector('header-contact-links');
+                // console.log('Getting shadow contact root.');
+            }
 
-        headerPortraitText.classList.add('hidden-portrait-text');
+            if (shadowContact.shadowRoot !== null) {
+                // console.log('Shadow contact shadowRoot found');
+                linkContainer = shadowContact.shadowRoot.querySelector('.header-contact');
+            }
 
-        passedCollapsePoint = false;
-    }
-
-    function GetPortraitImageHeight() {
-        return getComputedStyle(headerPortrait).getPropertyValue('--header-image-size').trim();
-    }
-
-
-    function TryGetShadowContact(){
-        if(linkContainer !== null){
-            // console.log('Shadow contact found');
-            return true;
+            // console.log(`Link container is available: ${linkContainer !== null}`)
+            return linkContainer !== null;
         }
-
-        if(shadowContact === null){
-            shadowContact = document.querySelector('header-contact-links');
-            // console.log('Getting shadow contact root.');
-        }
-
-        if(shadowContact.shadowRoot !== null) {
-            // console.log('Shadow contact shadowRoot found');
-            linkContainer = shadowContact.shadowRoot.querySelector('.header-contact');
-        }
-
-        // console.log(`Link container is available: ${linkContainer !== null}`)
-        return linkContainer !== null;
-    }
 }
 
 
 class HeaderContactLinks extends HTMLElement {
 
     constructor() {
-
         super();
         this.attachShadow({mode: 'open'});
     }
@@ -331,7 +322,6 @@ class HeaderContactLinks extends HTMLElement {
 
 customElements.define('header-contact-links', HeaderContactLinks);
 
-
 /**
  * Summary: Horizontal animate for the symbols inside the contact HTML element.
  * @param {float} options.startPosition - position to start from.
@@ -385,7 +375,6 @@ function AnimateContainerExpansion(resizedContainer){
         resizedContainer.removeEventListener('transitionend', handler);
     });
 }
-
 
 /**
  * Summary: Creates an element with an icon and with descriptive text. Optional: clicking the description leads to a URL link.
@@ -493,6 +482,7 @@ class ProjectDescriptionContainer extends HTMLElement
 
         mainElement.appendChild(descriptionElement);
         this.shadowRoot.appendChild(mainElement);
+        descriptionContainers.push(this.shadowRoot);
     }
 }
 
@@ -669,7 +659,6 @@ function FormatTextDescription(text){
         container.appendChild(listElement);
     }
 
-
     /* Add paragraph text to container.*/
     //TODO: fix janky mess
     if(paragraphs.length > 0){
@@ -693,13 +682,14 @@ function FormatTextDescription(text){
             lineBreakInterval++;
         })
 
-
-
         container.appendChild(paragraphElement);
     }
 
     return container;
 }
+
+//TODO: fix this shit
+
 function CreateTagsFromAttribute(attribute){
     if(!attribute){
         return null;
