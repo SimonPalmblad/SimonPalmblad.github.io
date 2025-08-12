@@ -318,6 +318,10 @@ ul{
     border-color: transparent;
 }
 
+.section-collapsible{
+    overflow: visible;
+}
+
 .section-header{
     font-size: var(--fs-500);
     padding-bottom: 1rem;
@@ -589,7 +593,6 @@ align-self: flex-end;
     margin: 0.75rem 0;
     box-shadow: var(--box-shadow-default);
     flex-shrink: 1;
-    transition: height 0.4s ease-in-out;
 
 }
 
@@ -711,6 +714,7 @@ align-self: flex-end;
 .hidden-element{
     height: 0;
     overflow: hidden;
+    transition: height 0.4s ease-in-out;
 }
 
 .selection-sidebar{

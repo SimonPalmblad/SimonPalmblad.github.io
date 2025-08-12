@@ -80,6 +80,10 @@ window.addEventListener('load', () => {})
             }
         })
 
+        document.querySelector('.section-header').addEventListener('click', (evt) => {
+            AnimateContainerExpansion(document.querySelector('.section-collapsible'), {})
+        })
+
         function UpdateHeaderTitlePosition() {
             let sizeThreshold = window.matchMedia('(max-width: 600px)');
             if (sizeThreshold.matches) {
@@ -357,7 +361,7 @@ function AnimateContactSymbols(animationTarget, {...options}) {
 }
 
 function AnimateContainerExpansion(resizedContainer){
-
+    console.log("Expanding container");
     const isVisible = resizedContainer.classList.toggle('visible');
 
     // EXPAND
