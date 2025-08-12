@@ -62,8 +62,6 @@ window.addEventListener('load', () => {})
         //         container.style.height = container.scrollHeight + 'px';
         //     }
         // })
-
-
     })
 
     /* Collapsed portrait click event */
