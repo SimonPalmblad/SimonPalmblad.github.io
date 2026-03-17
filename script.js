@@ -432,9 +432,14 @@ class ProjectDescriptionContainer extends HTMLElement
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
 
+        const descriptionTitleContainer = document.createElement('div');
+        descriptionTitleContainer.className = 'description-title-container';
+
         const descriptionTitle = document.createElement('p');
         descriptionTitle.className = 'description-title';
         descriptionTitle.textContent = this.getAttribute('title');
+
+        descriptionTitleContainer.appendChild(descriptionTitle);
 
         const tagContainer = document.createElement('div');
         tagContainer.className = 'tag-container';
@@ -455,13 +460,14 @@ class ProjectDescriptionContainer extends HTMLElement
 
         const selectionIndicatorInner = CreateSelectionIndicatorInner(descriptionElement);
 
-        const readMoreElement = CreateReadMoreElement({
-            textContent: this.getAttribute('long-description') || loremIpsum,
-            targetURL: this.getAttribute('target-url') || 'no_URL',
-            highlights: [leftBar],
-            highlightBorders: [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine],
-            linkButtonText: this.getAttribute('link-button-text') || ''
+        const readMoreElement= CreateReadMoreElement({
+                textContent: this.getAttribute('long-description') || 'no_description',
+                targetURL: this.getAttribute('target-url') || 'no_URL',
+                highlights: [leftBar],
+                highlightBorders: [selectionDiamond, selectionIndicatorInner.selectionCircle, selectionIndicatorInner.selectionLine],
+                linkButtonText: this.getAttribute('link-button-text') || ''
             });
+
 
         // Center SelectionDiamond vertically in relation to DescriptionElement
         requestAnimationFrame(() => {
@@ -470,7 +476,7 @@ class ProjectDescriptionContainer extends HTMLElement
         });
 
         /// -------- CREATE HTML TREE -------- ///
-        descriptionContainer.appendChild(descriptionTitle);
+        descriptionContainer.appendChild(descriptionTitleContainer);
         descriptionContainer.appendChild(tagContainer);
 
         if(descriptionTags !== null) {
@@ -480,11 +486,22 @@ class ProjectDescriptionContainer extends HTMLElement
             }
         }
 
+        // OPTIONAL: Create an icon for the title
+        if(this.getAttribute('image-url') !== null) {
+            const image = document.createElement('description-img');
+            image.className = 'description-img';
+            image.innerHTML = `<img src="${this.getAttribute('image-url')}" style="height: ${this.getAttribute('image-url-height') || '20%'}">`;
+            descriptionTitleContainer.appendChild(image);
+        }
+
         descriptionContainer.appendChild(description);
 
-        descriptionContainer.appendChild(readMoreElement.buttonContainer);
-        descriptionContainer.appendChild(readMoreElement.readMoreContainer);
-        
+        if(readMoreElement !== null) {
+            descriptionContainer.appendChild(readMoreElement.buttonContainer);
+            if(readMoreElement.readMoreContainer !== null)
+                descriptionContainer.appendChild(readMoreElement.readMoreContainer);
+        }
+
         descriptionElement.appendChild(selectionIndicatorInner.selectionCircle);
         descriptionElement.appendChild(selectionDiamond);
         descriptionElement.appendChild(leftBar);
@@ -522,81 +539,97 @@ function CreateReadMoreElement({textContent, targetURL, ...options } = {})
                                   .filter(([_, value]) => value !== '')))
 
     const settings = {...defaults, ...sanitizedOptions};
+    let readMoreContainer = null;
+    let buttonReadMore = null;
+    let readMoreText = null;
 
+    let buttonURL = null;
+    let buttonUrlIcon = null;
+    let buttonURLText = null;
 
     const showMoreText = "Show more";
     const showLessText = "Show less";
 
-    const readMoreContainer = document.createElement('div');
-    readMoreContainer.className = 'read-more';
-    readMoreContainer.classList.add('hidden-element');
+
+    if(textContent !== 'no_description')
+    {
+        readMoreContainer = document.createElement('div');
+        readMoreContainer.className = 'read-more';
+        readMoreContainer.classList.add('hidden-element');
+
+        readMoreText = FormatTextDescription(textContent);
+        buttonReadMore = document.createElement('button');
+        buttonReadMore.className = 'button';
+        buttonReadMore.classList.add('custom-hover');
+        buttonReadMore.textContent = showMoreText;
+
+        /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
+
+        buttonReadMore.addEventListener('click', () => {
+            const isActive = buttonReadMore.classList.toggle('is-active-button');
+
+            for (let highlight of settings.highlights) {
+                highlight.classList.toggle('selection-highlight');
+                highlight.classList.toggle('selection-animation-active');
+                highlight.classList.toggle('selection-animation-inactive');
+            }
+
+            for (let border of settings.highlightBorders) {
+                border.classList.toggle('selection-highlight-border');
+                border.classList.toggle('selection-animation-active');
+                border.classList.toggle('selection-animation-inactive');
+            }
+
+            AnimateContainerExpansion(readMoreContainer);
+
+            if(isActive){
+                buttonReadMore.textContent = showLessText;
+            }
+
+            else{
+                buttonReadMore.textContent = showMoreText;
+            }
+        });
+    }
 
     /* __________ CREATE BUTTON ELEMENTS __________ */
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'button-container';
 
-    const buttonReadMore = document.createElement('button');
-    buttonReadMore.className = 'button';
-    buttonReadMore.classList.add('custom-hover');
-    buttonReadMore.textContent = showMoreText;
+    if(targetURL !== 'no_URL'){
+        buttonURL = document.createElement('button');
+        buttonURL.className = 'button';
+        buttonURL.classList.add('github');
+        buttonURL.classList.add('custom-hover');
+        buttonURL.title = targetURL;
 
-    const buttonURL = document.createElement('button');
-    buttonURL.className = 'button';
-    buttonURL.classList.add('github');
-    buttonURL.classList.add('custom-hover');
-    buttonURL.title = targetURL;
+        buttonURL.addEventListener('click', () => GoToURL(targetURL))
 
-    buttonURL.addEventListener('click', () => GoToURL(targetURL))
-
-    const buttonURLText = document.createElement('span');
-    buttonURLText.textContent = settings.linkButtonText;
+        buttonURLText = document.createElement('span');
+        buttonURLText.textContent = settings.linkButtonText;
 
 
-    const buttonUrlIcon = document.createElement('div');
-    buttonUrlIcon.className = 'github-icon-container';
-    fetch('images/SVGs/repository_icon.svg')
-        .then(response => response.text())
-        .then(svgText =>{
-            buttonUrlIcon.innerHTML = svgText;
-        })
-        .catch(error => console.log('Error loading Repository Icon SVG', error));
+        buttonUrlIcon = document.createElement('div');
+        buttonUrlIcon.className = 'github-icon-container';
+        fetch('images/SVGs/repository_icon.svg')
+            .then(response => response.text())
+            .then(svgText =>{
+                buttonUrlIcon.innerHTML = svgText;
+            })
+            .catch(error => console.log('Error loading Repository Icon SVG', error));
 
-    const readMoreText = FormatTextDescription(textContent);
+    }
 
-    /* _________ READ-MORE BUTTON FUNCTIONALITY _________ */
+    if(readMoreContainer){
+        buttonContainer.appendChild(buttonReadMore);
+        readMoreContainer.appendChild(readMoreText);
+    }
 
-    buttonReadMore.addEventListener('click', () => {
-        const isActive = buttonReadMore.classList.toggle('is-active-button');
-
-        for (let highlight of settings.highlights) {
-            highlight.classList.toggle('selection-highlight');
-            highlight.classList.toggle('selection-animation-active');
-            highlight.classList.toggle('selection-animation-inactive');
-        }
-
-        for (let border of settings.highlightBorders) {
-            border.classList.toggle('selection-highlight-border');
-            border.classList.toggle('selection-animation-active');
-            border.classList.toggle('selection-animation-inactive');
-        }
-
-        AnimateContainerExpansion(readMoreContainer);
-
-        if(isActive){
-            buttonReadMore.textContent = showLessText;
-        }
-
-        else{
-            buttonReadMore.textContent = showMoreText;
-        }
-    });
-
-    buttonURL.appendChild(buttonUrlIcon);
-    buttonURL.appendChild(buttonURLText);
-
-    buttonContainer.appendChild(buttonReadMore);
-    buttonContainer.appendChild(buttonURL);
-    readMoreContainer.appendChild(readMoreText);
+    if(buttonURL){
+        buttonURL.appendChild(buttonUrlIcon);
+        buttonURL.appendChild(buttonURLText);
+        buttonContainer.appendChild(buttonURL);
+    }
 
     return {readMoreContainer, buttonContainer};
 }
@@ -632,11 +665,16 @@ function FormatTextDescription(text){
     const lines = text.split('\n').map(line => line.trim());
     const paragraphs = [];
     const listItems = [];
+    const images= [];
 
     lines.forEach(line => {
         if (/^- /.test(line)) {
             listItems.push(line);
-        } else {
+        } else if (/^<img src='.*'>/.test(line)) {
+            images.push(
+                line.split('<img src=')[1].split('>')[0].replace(/['"]+/g, ''));
+        }
+        else{
             paragraphs.push(line);
         }
     });
@@ -669,6 +707,17 @@ function FormatTextDescription(text){
         container.appendChild(listElement);
     }
 
+    if(images.length > 0){
+        for (let image of images) {
+            const newImage = document.createElement('img');
+            console.log("created image elem")
+            newImage.src = image;
+            newImage.className = 'read-more-image';
+            container.appendChild(newImage);
+        }
+    }
+
+
 
     /* Add paragraph text to container.*/
     //TODO: fix janky mess
@@ -692,8 +741,6 @@ function FormatTextDescription(text){
 
             lineBreakInterval++;
         })
-
-
 
         container.appendChild(paragraphElement);
     }

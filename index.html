@@ -22,7 +22,7 @@
 
         <div class ="header-portrait">
             <img class="no-transitions" src="images/portrait.png" alt="Portrait">
-           <img src="images/SVGs/glyphs.svg" class="hidden-portrait-text header-portrait-text" alt ="PRES½S">
+            <img src="images/SVGs/glyphs.svg" class="hidden-portrait-text header-portrait-text" alt ="PRES½S">
         </div>
 
         <div class ="header-text">
@@ -43,6 +43,47 @@
 
 <div class="main-container">
 
+    <!--    ________ EXPERIENCE ________ -->
+    <div class="section-header">
+        <div class="section-icon">
+            <img src="images/SVGs/folder_icon.svg" alt="">
+        </div>
+        <p>C:\Users:\simon\</p>
+        <p class = "section-highlight">experience</p>
+    </div>
+    <div class="section-collapsible">
+        <project-description-container
+                title="Sonity PlayMaker integration"
+                target-url="https://www.sonigon.com/sonity/"
+                link-button-text="Sonity"
+                tags="C#, Unity, Plugin integration, Editor tool"
+                image-url="images/Sonity-Website-Logo-1.7.png"
+                image-url-height="18%"
+                description="Unity plugin integration and editor tooling for Sonity and PlayMaker. Independently created a seamless integration between the two plugins, as well as writing documentation for the official Sonity website.">
+        </project-description-container>
+
+        <project-description-container
+                title="Ludea Ek"
+                target-url="https://ludea.se/"
+                link-button-text="Ludea"
+                tags="C#, Unity, Python, Internal tooling"
+                image-url="images/Logo_DARK_BG.png"
+                image-url-height="22%"
+                description="Created tools to automate internal processes using Python. Organized C# and programming workshops for our participants to learn coding basics.">
+        </project-description-container>
+
+        <project-description-container
+                title="University of Skövde"
+                target-url="https://www.his.se/forskning/informationsteknologi/game-research-group/studio-ludum/"
+                link-button-text="About the project"
+                image-url="images/HiS-LogoFull.png"
+                image-url-height="24%"
+                tags="C#, Unity, Web development, JavaScript"
+                description="Part of a research project, where I was responsible for creating the audio integrations for our mobile apps in Unity. Also created a web-page used for relaxation and sleeping where the user could mix and match music with ambient sounds.">
+        </project-description-container>
+    </div>
+
+    <!--     ________ PROJECTS ________ -->
     <div class="section-header">
         <div class="section-icon">
             <img src="images/SVGs/folder_icon.svg" alt="">
@@ -52,16 +93,18 @@
     </div>
 
     <project-description-container
-        title="Unity Inspector Lock"
-        target-url="https://github.com/SimonPalmblad/InspectorLockButton"
-        tags="C#, .NET, Unity, editor-tool"
-        description="A custom Unity Editor tool. Allows the user to add a lock button to any GameObject which can enable/disable editing via the interface."
-        long-description="<h3>Features</h3>
+            title="Unity Inspector Lock"
+            target-url="https://github.com/SimonPalmblad/InspectorLockButton"
+            tags="C#, Unity, Editor tool"
+            description="A custom Unity Editor tool. Allows the user to add a lock button to any GameObject which can enable/disable editing via the interface."
+            long-description="<h3>Features</h3>
     - Lock the UI of any variable in the Unity Inspector.
     - Integration with Unity's official UI Toolkit system.
     - Context menu for quickly creating new lockable assets.
     - Settings and styling options for lockable assets.
     - Lock state is unique per GameObject.
+
+     <img src='images/inspector-lock-ui.png'>
 
     This tool provides fine-control over variables within the Unity Editor.
     A locked asset cannot be edited in the Inspector UI, preventing accidental changes or indicating that it should not be changed/edited.
@@ -70,11 +113,11 @@
     </project-description-container>
 
     <project-description-container
-        title="String Flex Box"
-        target-url="https://github.com/SimonPalmblad/StringFlexBox"
-        tags="C#, .NET, string-formatting"
-        description="A code library for creating dynamic textboxes around strings to be used in the console."
-long-description="<h3>Features</h3>
+            title="String Flex Box"
+            target-url="https://github.com/SimonPalmblad/StringFlexBox"
+            tags="C#, String formatting"
+            description="A code library for creating dynamic textboxes around strings to be used in the console."
+            long-description="<h3>Features</h3>
     - An easy-to-use code library for creating flexible textboxes.
     - Automatic word-wrapping functionality.
     - Customizable via size, padding and border style.
@@ -86,11 +129,11 @@ long-description="<h3>Features</h3>
     I wanted a way of organizing and neatly displaying text and ran in to issues using the normal methods when I wanted to arrange two textboxes next to each other."></project-description-container>
 
     <project-description-container
-    title="Unity Animation Tool"
-    target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
-    tags="C#, .NET, Unity, editor-tool, extension"
-    description="An extension to Unity's 2D Sprite Shape (2D vector graphics objects). Adds functionality for animating Sprite Shapes via the Editor Timeline tool."
-    long-description="<h3>Features</h3>
+            title="Unity Animation Tool"
+            target-url="https://github.com/SimonPalmblad/Unity-2D-SpriteShapeAnimator"
+            tags=" C#, Unity, Editor tool, Extension"
+            description="An extension to Unity's 2D Sprite Shape (2D vector graphics objects). Adds functionality for animating Sprite Shapes via the Editor Timeline tool."
+            long-description="<h3>Features</h3>
     - Custom UI for the Unity Editor.
     - Context sensitive toolbar button.
     - Context-menu default asset creation.
